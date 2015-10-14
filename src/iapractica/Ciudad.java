@@ -24,6 +24,12 @@ public class Ciudad {
     
     //Constructora
     public Ciudad() {
+        //numero de estaciones RANDOM
+        //Posiciones estaciones RANDOM
+        //total bicis estacion RANDOM
+        //furgonetas disponibles RANDOM
+        //tipo de demanda RANDOM
+        //total bicis > estaciones*50
         
     }
     
