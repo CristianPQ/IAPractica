@@ -1,13 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+package iapractica;
 
-/**
- *
- * @author jose
- */
 public class Viaje {
     public int id;
     public int NBsol;
@@ -15,7 +7,8 @@ public class Viaje {
     public int dest1;
     public int dest2;
     
-    public void Viaje(int id, int NBsol, int origen, int dest1, int dest2) {
+    //Porque void?
+    public Viaje(int id, int NBsol, int origen, int dest1, int dest2) {
         this.id = id;
         this.NBsol = NBsol;
         this.origen = origen;

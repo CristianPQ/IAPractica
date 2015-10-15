@@ -1,0 +1,249 @@
+package iapractica;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import IA.Bicing.Estacion;
+import IA.Bicing.Estaciones;
+import aima.search.framework.Successor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
+public class Escenario {
+
+    private static int NUMEROMAXIMOVIAJES = 2;
+    private static int NMAXBICIS = 30;
+    private static int nEstaciones;
+    private static int nBicicletas;
+    private static int nFurgonetas;
+    public Estaciones estaciones;
+    ArrayList<Furgoneta> furgonetas;
+    ArrayList<Viaje> viajes;
+    private Random r = new Random();
+
+    /**
+     * Constructor de la representacion del estado propuesto, con semilla
+     * aleatoria
+     *
+     * @param e Numero de estaciones
+     * @param b Numero de bicicletas
+     * @param f Numero de furgonetas
+     */
+    public Escenario(int e, int b, int f) {
+        nEstaciones = e;
+        nBicicletas = b;
+        nFurgonetas = f;
+        //estaciones = new ArrayList();
+        furgonetas = new ArrayList();
+        viajes = new ArrayList();
+
+        estaciones = new Estaciones(e, b, 1, r.nextInt(100));
+
+        for (int i = 0; i < f; i++) {
+            furgonetas.add(new Furgoneta());
+        }
+        int nPeticion = 0;
+
+        //estacionesgeneradas
+    }
+
+    /**
+     * Constructor de la representacion del estado propuesto, con semilla dada
+     *
+     * @param e Numero de estaciones
+     * @param b Numero de bicicletas
+     * @param f Numero de furgonetas
+     */
+    public Escenario(int e, int b, int f, int seed) {
+
+        nEstaciones = e;
+        nBicicletas = b;
+        nFurgonetas = f;
+        furgonetas = new ArrayList();
+        viajes = new ArrayList();
+
+        Estaciones estacionesgeneradas = new Estaciones(e, b, 1, seed);
+
+        for (int i = 0; i < f; i++) {
+            furgonetas.add(new Furgoneta());
+        }
+        int nPeticion = 0;
+
+        //estacionesgeneradas
+    }
+
+    public Escenario(Escenario clone) {
+        nEstaciones = clone.getnEstaciones();
+        //nCentrosDistribucion = clone.getnCentrosDistribucion();
+        estaciones = clone.getEstaciones();
+        /*for (Gasolinera g : clone.getGasolineras()) {
+         gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
+         }*/
+        viajes = new ArrayList(clone.getViajes().size());
+        for (Viaje v : clone.getViajes()) {
+            viajes.add(new Viaje(v.getId(), v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
+        }
+        furgonetas = new ArrayList(clone.getFurgonetas().size());
+        for (Furgoneta f : clone.getFurgonetas()) {
+            /*ArrayList<Viaje> newViajes = new int[5][2];
+            ArrayList<Viaje> oldViajes = f.getViajes();
+            for (int i = 0; i < oldViajes.length; i++) {
+                newViajes[i][0] = oldViajes[i][0];
+                newViajes[i][1] = oldViajes[i][1];
+            }*/
+            furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
+        }
+    }
+
+    public int heuristicValue(int z) {
+
+        // Cambiar formula
+        
+        int beneficio = 0;
+       switch (z) {
+         case 0:
+         for (Viaje v : viajes) {
+         if (v.getIdFurgoneta() != -1) {
+         beneficio += v.getBeneficioHoy();
+         } else {
+         beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
+         }
+         }
+         return -1 * (int) Math.round(beneficio - (getKilometros() * PRECIOKILOMETRO));
+
+         case 1:
+         for (Viaje v : viajes) {
+         if (v.getIdFurgoneta() != -1) {
+         beneficio += v.getBeneficioHoy() - p.getBeneficioManana();
+         }
+         }
+
+         return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() * PRECIOKILOMETRO));
+         default:
+         return 500;
+         }
+    }
+
+    /**
+     * Devuelve todos los sucesores usando solo el operador de intercambiar (de
+     * momento creo que es suficiente, ya que podemos intercambiar los camiones
+     * entre dos peticiones aunque no tengan ningún camión asignado).
+     *
+     * @return Lista de sucesores (DGBoards)
+     */
+    public ArrayList getTodosSucesores() {
+        ArrayList ret = new ArrayList();
+        for (int i = 0; i < viajes.size(); i++) {
+            for (int j = i + 1; j < viajes.size(); j++) {
+                Escenario e = new Escenario(this);
+                e.swapFurgonetas(i, j);
+                int idFurgonetaI = viajes.get(i).getIdFurgoneta();
+                int idFurgonetaJ = viajes.get(j).getIdFurgoneta();
+                Boolean valido = true;
+                if (idFurgonetaI != -1) {
+                    valido &= furgonetas.get(idFurgonetaI).getKilometrosRecorridos() <= NKILOMETROSDIAS;
+                }
+                if (idFurgonetaJ != -1) {
+                    valido &= furgonetas.get(idFurgonetaJ).getKilometrosRecorridos() <= NKILOMETROSDIAS;
+                }
+                if (valido) {
+                    ret.add(new Successor("Intercambiadas " + i + " y " + j + " H:" + e.heuristicValue(1), e));
+                }
+            }
+        }
+
+        for (int i = 0; i < viajes.size(); i++) {
+            if (viajes.get(i).getIdFurgoneta() == -1) {
+                for (int k = 0; k < furgonetas.size(); k++) {
+                    Escenario b = new Escenario(this);
+                    if (b.addPeticionACamionFirstPlace(b.furgonetas.get(k).getId(), b.viajes.get(i).getIdViaje(), NKILOMETROSDIAS)) {
+                        ret.add(new Successor("Añadida peticion " + i + " a camion" + b.furgonetas.get(k).getId() + "H:" + b.heuristicValue(1), b));
+                    }
+
+                }
+
+            }
+
+        }
+
+        return ret;
+    }
+    
+    public boolean isGoalState() {
+        return (false);
+    }
+
+    public int getKilometros() {
+        int kilometros = 0;
+        for (Furgoneta f : furgonetas) {
+            kilometros += f.getKilometrosRecorridos();
+        }
+        return kilometros;
+    }
+
+        public static int getNUMEROMAXIMOVIAJES() {
+        return NUMEROMAXIMOVIAJES;
+    }
+
+    public static int getNMAXBICIS() {
+        return NMAXBICIS;
+    }
+    public int getnEstaciones() {
+        return nEstaciones;
+    }
+
+    public Estaciones getEstaciones() {
+        return estaciones;
+    }
+
+    public ArrayList<Furgoneta> getFurgonetas() {
+        return furgonetas;
+    }
+
+    public ArrayList<Viaje> getViajes() {
+        return viajes;
+    }
+    
+    // No se usan de momento:
+    
+        public int getPeticionesServidas() {
+        int peticionesServidas = 0;
+        for (Viaje peticion : viajes) {
+            if (peticion.getIdFurgoneta() != -1) {
+                peticionesServidas++;
+            }
+        }
+        return peticionesServidas;
+    }
+
+    public int getPeticionesNoServidas() {
+        int peticionesServidas = 0;
+        for (Viaje peticion : viajes) {
+            if (peticion.getIdFurgoneta() == -1) {
+                peticionesServidas++;
+            }
+        }
+        return peticionesServidas;
+    }
+    
+       public double calcularBeneficio() {
+        double beneficio = 0;
+        for (Viaje v : viajes) {
+            if (v.getIdFurgoneta() != -1) {
+                beneficio += v.getBeneficioHoy();
+            }
+        }
+        return beneficio - (getKilometros() * PRECIOKILOMETRO);
+    }
+
+    /**
+     * Revisar si la formula está correcta
+     */
+    private int calcDistancia(int x1, int y1, int x2, int y2) {
+        return Math.abs(x2 - x1) + Math.abs(y2 - y1);
+    }
+
+}

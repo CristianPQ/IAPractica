@@ -16,6 +16,7 @@ public class IAPractica {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Escenario e = new Escenario(10,50,1);
     }
     
 }
