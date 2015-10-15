@@ -20,6 +20,7 @@ public class Escenario {
     private static int nBicicletas;
     private static int nFurgonetas;
     public Estaciones estaciones;
+    public Estaciones ENoDemanda;
     ArrayList<Furgoneta> furgonetas;
     ArrayList<Viaje> viajes;
     private Random r = new Random();
@@ -39,14 +40,19 @@ public class Escenario {
         //estaciones = new ArrayList();
         furgonetas = new ArrayList();
         viajes = new ArrayList();
-
-        estaciones = new Estaciones(e, b, 1, r.nextInt(100));
-
+        Estaciones est = new Estaciones(e, b, 1, r.nextInt(100));
         for (int i = 0; i < f; i++) {
             furgonetas.add(new Furgoneta());
         }
         int nPeticion = 0;
-
+        for (int i = 0; i < e; ++i) {
+            if(est.get(i).getDemanda() <= est.get(i).getNumBicicletasNoUsadas()+ est.get(i).getNumBicicletasNext()) {
+                estaciones.add(est.get(i));
+            }
+            else ENoDemanda.add(est.get(i));
+        }
+        //Dos listas de estaciones. Una para las que cumplen con la demanda y otra para las que no.
+        
         //estacionesgeneradas
     }
 
@@ -113,21 +119,20 @@ public class Escenario {
        switch (z) {
          case 0:
          for (Viaje v : viajes) {
-         if (v.getIdFurgoneta() != -1) {
-         beneficio += v.getBeneficioHoy();
-         } else {
-         beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
-         }
+            if (v.getIdFurgoneta() != -1) {
+                beneficio += v.getBeneficioHoy();
+            } else {
+                beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
+            }
          }
          return -1 * (int) Math.round(beneficio - (getKilometros() * PRECIOKILOMETRO));
 
          case 1:
          for (Viaje v : viajes) {
-         if (v.getIdFurgoneta() != -1) {
-         beneficio += v.getBeneficioHoy() - p.getBeneficioManana();
+            if (v.getIdFurgoneta() != -1) {
+                beneficio += v.getBeneficioHoy() - p.getBeneficioManana();
+            }
          }
-         }
-
          return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() * PRECIOKILOMETRO));
          default:
          return 500;
