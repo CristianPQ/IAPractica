@@ -98,6 +98,13 @@ public class Escenario {
         }
     }
 
+    //Falta implementar
+        public Boolean anadirViajeFurgoneta(int idFurgoneta, int idViaje, int cap) {
+        
+            return true;
+            
+        }
+    
     public int heuristicValue(int z) {
 
         // Cambiar formula
@@ -167,6 +174,56 @@ public class Escenario {
 
             }
 
+        }
+
+        return ret;
+    }
+    
+        public ArrayList getSucesorAleatorio() {
+        ArrayList<Successor> ret = new ArrayList();
+
+        int i = r.nextInt(viajes.size());
+        int j = 0;
+        // Por si acaso solo hubiese una petición
+        if (viajes.size() > 1) {
+            do {
+                j = r.nextInt(viajes.size());
+            } while (i == j);
+        }
+
+        Escenario b = new Escenario(this);
+        b.swapFurrgonetas(i, j);
+        ret.add(new Successor("Intercambiadas " + i + " y " + j, b));
+
+        Escenario addBoard = new Escenario(this);
+        if (viajes.size() > 1) {
+            int peticion = 0;
+            boolean peticionValida = false;
+            for (int k = 0; k < 1000; k++) {
+                peticion = r.nextInt(viajes.size());
+                if (viajes.get(peticion).getIdFurgoneta() == -1) {
+                    peticionValida = true;
+                    break;
+                }
+            }
+            if (peticionValida) {
+                boolean colocada = false;
+                int camion = 0;
+                for (int k = 0; k < 1000; k++) {
+                    camion = r.nextInt(furgonetas.size());
+                    colocada = addBoard.addPeticionACamionFirstPlace(furgonetas.get(camion).getId(), viajes.get(peticion).getIdViaje(), NKILOMETROSDIAS);
+                    if (colocada) {
+                        break;
+                    }
+                }
+                if (colocada) {
+                    ret.add(new Successor("Añadida peticion " + peticion + " a camion" + addBoard.furgonetas.get(camion).getId() + "H:" + addBoard.heuristicValue(1), addBoard));
+                }
+            }
+        }
+
+        if (ret.size() == 2) {
+            ret.remove(r.nextInt(2));
         }
 
         return ret;
