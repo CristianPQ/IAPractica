@@ -10,7 +10,9 @@ import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class Escenario {
 
@@ -19,8 +21,8 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
-    private Estaciones estacionesSinDemanda;
-    private Estaciones estacionesConDemanda;
+    private TreeMap<Integer, Integer> estacionesSinDemanda;
+    private TreeMap<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -47,6 +49,11 @@ public class Escenario {
 
         Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
         
+        for (int i = 0; i < estacionesGeneradas.size(); i++) {
+        
+        int demanda = estacionesGeneradas.get(i).getDemanda();
+        estacionesSinDemanda = new HashMap<String, Integer>();
+        }
         int prueba = 1;
         
         for (int i = 0; i < f; i++) {
