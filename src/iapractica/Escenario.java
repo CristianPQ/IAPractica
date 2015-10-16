@@ -47,6 +47,8 @@ public class Escenario {
 
         Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
         
+        int prueba = 1;
+        
         for (int i = 0; i < f; i++) {
             furgonetas.add(new Furgoneta(i+1));
         }
