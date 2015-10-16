@@ -5,6 +5,8 @@
  */
 package iapractica;
 
+import IA.Bicing.Estaciones;
+
 /**
  *
  * @author Cristian
@@ -16,7 +18,12 @@ public class IAPractica {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Escenario e = new Escenario(10,50,1);
+        
+        Estaciones estacionesGeneradas = new Estaciones(10, 50, 0, 1);
+
+        int a = 1;
+        
+        //Escenario e = new Escenario(10,50,1,1);
     }
     
 }

@@ -19,8 +19,8 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
-    public Estaciones estacionesCumplen;
-    public Estaciones estacionesConDemanda;
+    private Estaciones estacionesSinDemanda;
+    private Estaciones estacionesConDemanda;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -46,10 +46,13 @@ public class Escenario {
         viajes = new ArrayList();
 
         Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
-
+        
         for (int i = 0; i < f; i++) {
             furgonetas.add(new Furgoneta(i+1));
         }
+        
+        
+        
     }
 
     /**
