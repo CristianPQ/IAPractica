@@ -19,7 +19,7 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
-    private Estaciones estacion;
+    private Estaciones estaciones;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
