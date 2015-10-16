@@ -26,7 +26,6 @@ public class Viaje {
     public int getDest2() {
         return dest2;
     }
-    
     public int getNBDest1() {
         return NBDest1;
     }
