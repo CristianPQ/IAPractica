@@ -81,7 +81,7 @@ public class Escenario {
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
         estaciones = clone.getEstaciones();
-        /*for (Gasolinera g : clone.getGasolineras()) {
+        for (Estacion e : clone.getEstaciones()) {
          gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
          }*/
         //viajes = new ArrayList(clone.getViajes().size());
