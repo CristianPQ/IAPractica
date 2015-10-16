@@ -19,8 +19,7 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
-    private Estaciones estacionesSinDemanda;
-    private Estaciones estacionesConDemanda;
+    private Estaciones estacion;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -79,10 +78,9 @@ public class Escenario {
         }
     }
 
-    //public Escenario(Escenario clone) {
-        //nEstaciones = clone.getnEstaciones();
-        //nCentrosDistribucion = clone.getnCentrosDistribucion();
-        //estaciones = clone.getEstaciones();
+    public Escenario(Escenario clone) {
+        nEstaciones = clone.getnEstaciones();
+        estaciones = clone.getEstaciones();
         /*for (Gasolinera g : clone.getGasolineras()) {
          gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
          }*/
@@ -100,7 +98,7 @@ public class Escenario {
             }*/
             //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
         //}
-    //}
+    }
 
     //Falta implementar
         public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
