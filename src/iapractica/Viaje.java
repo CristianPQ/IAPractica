@@ -1,8 +1,7 @@
 package iapractica;
 
 public class Viaje {
-    //public int id; viene dado por el origen dest1 y dest2, em principio no hace falta un ID
-    
+    //public int id; viene dado por el origen dest1 y dest2, em principio no hace falta un I
     private int origenx;
     private int origeny;
     private int dest1x;
