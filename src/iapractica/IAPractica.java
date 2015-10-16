@@ -19,7 +19,7 @@ public class IAPractica {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        Estaciones estacionesGeneradas = new Estaciones(10, 50, 0, 1);
+        Estaciones estacionesGeneradas = new Estaciones(10, 50, 1, 2);
 
         int a = 1;
         
