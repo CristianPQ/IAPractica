@@ -3,34 +3,16 @@ package iapractica;
 public class Viaje {
     //public int id; viene dado por el origen dest1 y dest2, em principio no hace falta un ID
     
-    //que es esto?
-    public int NBsol;
-    public int origen;
-    public int dest1;
-    public int dest2;
+    private int origen;
+    private int dest1;
+    private int dest2;
+    private int NBDest1;
+    private int NBDest2;
     
-    //modif Cristian
-    public int furgoneta;
-    
-    //Porque void? --> es la constructora
-    public Viaje(/*int id, */int NBsol, int origen, int dest1, int dest2) {
-        //this.id = id;
-        this.NBsol = NBsol;
+    public Viaje(int origen, int dest1, int dest2) {
         this.origen = origen;
         this.dest1 = dest1;
         this.dest2 = dest2;
-    }
-    
-    /*public int getId() {
-        return id;
-    }*/
-    
-    public int getIDFurgoneta(){
-        return furgoneta;
-    }
-    
-    public int getNBsol() {
-        return NBsol;
     }
     
     public int getOrigen() {
@@ -45,8 +27,22 @@ public class Viaje {
         return dest2;
     }
     
-    public void setNBsol(int sol) {
-        NBsol = sol;
+    public int getNBDest1() {
+        return NBDest1;
+    }
+    
+    public int getNBDest2(){
+        return NBDest2;
+    }
+    
+    public int getCosteTramo1(){
+        int coste = (NBDest1+NBDest2+9)/10;
+        return coste;
+    }
+    
+    public int getCosteTramo2() {
+        int coste = (NBDest2+9)/10;
+        return coste;
     }
     
     public void setOrigen(int orig) {
