@@ -146,15 +146,7 @@ public class Escenario {
             case 0:
                 return Beneficios();
             case 1:
-                for (Viaje v : viajes) {
-                    if (v.getIDFurgoneta() != -1) {
-                        beneficio += v.getBeneficioHoy() - v.getBeneficioManana();
-                    }
-                }
-                return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() /**
-                         * PRECIOKILOMETRO
-                         */
-                        ));
+                return 500;
             default:
                 return 500;
         }
