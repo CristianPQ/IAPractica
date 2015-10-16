@@ -26,6 +26,8 @@ public class Ciudad {
         //tipo de demanda RANDOM
         //total bicis > estaciones*50
         
+        //dos estrategias para generar la solucion inicial(coste computacional reducido)
+        
     }
     
 }

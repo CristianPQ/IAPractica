@@ -19,10 +19,10 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas;
     private static int nFurgonetas;
-    public Estaciones estaciones;
-    public Estaciones ENoDemanda;
-    ArrayList<Furgoneta> furgonetas;
-    ArrayList<Viaje> viajes;
+    public Estaciones estacionesCumplen;
+    public Estaciones estacionesConDemanda;
+    private ArrayList<Furgoneta> furgonetas;
+    private ArrayList<Viaje> viajes;
     private Random r = new Random();
 
     /**
@@ -49,7 +49,7 @@ public class Escenario {
             if(est.get(i).getDemanda() <= est.get(i).getNumBicicletasNoUsadas()+ est.get(i).getNumBicicletasNext()) {
                 estaciones.add(est.get(i));
             }
-            else ENoDemanda.add(est.get(i));
+            else enNoDemanda.add(est.get(i));
         }
         //Dos listas de estaciones. Una para las que cumplen con la demanda y otra para las que no.
         
@@ -71,7 +71,7 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesgeneradas = new Estaciones(e, b, 1, seed);
+        Estaciones estacionesGeneradas = new Estaciones(e, b, 1, seed);
 
         for (int i = 0; i < f; i++) {
             furgonetas.add(new Furgoneta());
@@ -90,7 +90,7 @@ public class Escenario {
          }*/
         viajes = new ArrayList(clone.getViajes().size());
         for (Viaje v : clone.getViajes()) {
-            viajes.add(new Viaje(v.getId(), v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
+            viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
         }
         furgonetas = new ArrayList(clone.getFurgonetas().size());
         for (Furgoneta f : clone.getFurgonetas()) {
@@ -118,8 +118,10 @@ public class Escenario {
         int beneficio = 0;
        switch (z) {
          case 0:
+             
+         //que hace exactamente este for?
          for (Viaje v : viajes) {
-            if (v.getIdFurgoneta() != -1) {
+            if (v.getIDFurgoneta() != -1) {
                 beneficio += v.getBeneficioHoy();
             } else {
                 beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());

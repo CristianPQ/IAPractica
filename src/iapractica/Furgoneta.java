@@ -8,8 +8,9 @@ public class Furgoneta {
     private int coordx;
     private int coordy;
     private int Nbicis;
-    private ArrayList<Viaje> viajes;
-    private int kilometrosRecorridos;
+    //es al reves, un viaje viene dado por una furgoneta ademas de los destinos y el origen
+    //private ArrayList<Viaje> viajes;
+    private int kilometrosRecorridos = 0;
 
     public void Furgoneta(int id, int coordx, int coordy, int Nbicis) {
         this.id = id;
@@ -35,9 +36,9 @@ public class Furgoneta {
         return Nbicis;
     }
 
-    public ArrayList<Viaje> getViajes() {
+    /*public ArrayList<Viaje> getViajes() {
         return viajes;
-    }
+    }*/
     
     public int getKilometrosRecorridos() {
         return kilometrosRecorridos;
@@ -61,7 +62,7 @@ public class Furgoneta {
    
      */
     
-    public void setKilometrosRecorridos(int kilometrosRecorridos) {
-        this.kilometrosRecorridos = kilometrosRecorridos;
+    public void addKilometrosRecorridos(int kilometrosRecorridos) {
+        this.kilometrosRecorridos += kilometrosRecorridos;
     }
 }
