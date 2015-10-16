@@ -1,3 +1,4 @@
+
 package iapractica;
 //PRUEBA GITHUB
 /*
@@ -10,7 +11,9 @@ import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class Escenario {
 
@@ -20,6 +23,8 @@ public class Escenario {
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
     private Estaciones estaciones;
+    private TreeMap<Integer, Integer> estacionesSinDemanda;
+    private TreeMap<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -44,8 +49,13 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
+        estaciones = new Estaciones(e, b, dem, seed);
         
+        for (int i = 0; i < estaciones.size(); i++) {
+        
+        int demanda = estaciones.get(i).getDemanda();
+        estacionesSinDemanda = new HashMap<String, Integer>();
+        }
         int prueba = 1;
         
         for (int i = 0; i < f; i++) {
@@ -81,7 +91,7 @@ public class Escenario {
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
         estaciones = clone.getEstaciones();
-        for (Estacion e : clone.getEstaciones()) {
+        /*for (Gasolinera g : clone.getGasolineras()) {
          gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
          }*/
         //viajes = new ArrayList(clone.getViajes().size());
