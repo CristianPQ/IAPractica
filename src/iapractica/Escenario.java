@@ -332,7 +332,6 @@ public class Escenario {
         return beneficio - (getKilometros() * PRECIOKILOMETRO);
     }
 
-    
     /**
      * Revisar si la formula está correcta
      */
@@ -340,21 +339,23 @@ public class Escenario {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
     
-    public int CosteViaje(Viaje v) {
+    public int costeViaje(Viaje v) {
         int ox = v.getOrigenx();
         int oy = v.getOrigeny();
         int d1x = v.getDest1x();
         int d1y = v.getDest1y();
         int result = Math.abs(ox-d1x) + Math.abs(oy-d1y);
         result = result*v.getCosteTramo1();
+        int beneficios = v.getNBDest1() - result;
         int d2x = v.getDest2x();
         int d2y = v.getDest2y();
         int aux = Math.abs(d1x-d2x) + Math.abs(d1y-d2y);
         aux = aux*v.getCosteTramo2();
-        return result + aux;
+        int beneficios2 = v.getNBDest2() - aux;
+        return beneficios + beneficios2;
     }
     
-    public int CosteEstacion(Estacion e) {
+    /*public int CosteEstacion(Estacion e) {
         int x = e.getCoordX();
         int y = e.getCoordY();
         int bt = 0;
@@ -363,12 +364,11 @@ public class Escenario {
             else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
         }
         return bt;
-    }
+    }*/
     
-    public int Beneficios() {
+    public int beneficios() {
         int beneficios = 0;
-        for(Viaje v: viajes) beneficios -= CosteViaje(v);
-        for (Estacion e: estaciones) beneficios += CosteEstacion(e);
+        for(Viaje v: viajes) beneficios -= costeViaje(v);
         return beneficios;
     }
 
