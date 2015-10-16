@@ -15,12 +15,13 @@ import java.util.Random;
 public class Escenario {
 
     private static int NUMEROMAXIMOVIAJES = 2;
-    private static int NMAXBICIS = 30;
+    private static int NMAXBICISFURGONETA = 30;
     private static int nEstaciones;
-    private static int nBicicletas;
+    private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
     public Estaciones estacionesCumplen;
     public Estaciones estacionesConDemanda;
+    //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
     private Random r = new Random();
@@ -29,31 +30,26 @@ public class Escenario {
      * Constructor de la representacion del estado propuesto, con semilla
      * aleatoria
      *
+     * 
+     * 
      * @param e Numero de estaciones
      * @param b Numero de bicicletas
      * @param f Numero de furgonetas
+     * @param dem Tipo de demanda
      */
-    public Escenario(int e, int b, int f) {
+    public Escenario(int e, int b, int dem, int f) {
+        int seed = r.nextInt(100);
         nEstaciones = e;
         nBicicletas = b;
         nFurgonetas = f;
-        //estaciones = new ArrayList();
         furgonetas = new ArrayList();
         viajes = new ArrayList();
-        Estaciones est = new Estaciones(e, b, 1, r.nextInt(100));
+
+        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
+
         for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta());
+            furgonetas.add(new Furgoneta(i+1));
         }
-        int nPeticion = 0;
-        for (int i = 0; i < e; ++i) {
-            if(est.get(i).getDemanda() <= est.get(i).getNumBicicletasNoUsadas()+ est.get(i).getNumBicicletasNext()) {
-                estaciones.add(est.get(i));
-            }
-            else enNoDemanda.add(est.get(i));
-        }
-        //Dos listas de estaciones. Una para las que cumplen con la demanda y otra para las que no.
-        
-        //estacionesgeneradas
     }
 
     /**
@@ -63,7 +59,7 @@ public class Escenario {
      * @param b Numero de bicicletas
      * @param f Numero de furgonetas
      */
-    public Escenario(int e, int b, int f, int seed) {
+    public Escenario(int e, int b, int f, int dem,int seed) {
 
         nEstaciones = e;
         nBicicletas = b;
@@ -71,41 +67,38 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesGeneradas = new Estaciones(e, b, 1, seed);
+        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
 
         for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta());
+            furgonetas.add(new Furgoneta(i+1));
         }
-        int nPeticion = 0;
-
-        //estacionesgeneradas
     }
 
-    public Escenario(Escenario clone) {
-        nEstaciones = clone.getnEstaciones();
+    //public Escenario(Escenario clone) {
+        //nEstaciones = clone.getnEstaciones();
         //nCentrosDistribucion = clone.getnCentrosDistribucion();
-        estaciones = clone.getEstaciones();
+        //estaciones = clone.getEstaciones();
         /*for (Gasolinera g : clone.getGasolineras()) {
          gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
          }*/
-        viajes = new ArrayList(clone.getViajes().size());
-        for (Viaje v : clone.getViajes()) {
-            viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
-        }
-        furgonetas = new ArrayList(clone.getFurgonetas().size());
-        for (Furgoneta f : clone.getFurgonetas()) {
+        //viajes = new ArrayList(clone.getViajes().size());
+        //for (Viaje v : clone.getViajes()) {
+        //    viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
+        //}
+        //furgonetas = new ArrayList(clone.getFurgonetas().size());
+        //for (Furgoneta f : clone.getFurgonetas()) {
             /*ArrayList<Viaje> newViajes = new int[5][2];
             ArrayList<Viaje> oldViajes = f.getViajes();
             for (int i = 0; i < oldViajes.length; i++) {
                 newViajes[i][0] = oldViajes[i][0];
                 newViajes[i][1] = oldViajes[i][1];
             }*/
-            furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
-        }
-    }
+            //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
+        //}
+    //}
 
     //Falta implementar
-        public Boolean anadirViajeFurgoneta(int idFurgoneta, int idViaje, int cap) {
+        public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
         
             return true;
             
@@ -116,7 +109,7 @@ public class Escenario {
         // Cambiar formula
         
         int beneficio = 0;
-       switch (z) {
+        switch (z) {
          case 0:
              
          //que hace exactamente este for?
@@ -127,15 +120,15 @@ public class Escenario {
                 beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
             }
          }
-         return -1 * (int) Math.round(beneficio - (getKilometros() * PRECIOKILOMETRO));
+         return -1 * (int) Math.round(beneficio - (getKilometros()/* * PRECIOKILOMETRO*/));
 
          case 1:
          for (Viaje v : viajes) {
-            if (v.getIdFurgoneta() != -1) {
-                beneficio += v.getBeneficioHoy() - p.getBeneficioManana();
+            if (v.getIDFurgoneta() != -1) {
+                beneficio += v.getBeneficioHoy() - v.getBeneficioManana();
             }
          }
-         return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() * PRECIOKILOMETRO));
+         return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() /** PRECIOKILOMETRO*/));
          default:
          return 500;
          }
@@ -252,9 +245,9 @@ public class Escenario {
         return NUMEROMAXIMOVIAJES;
     }
 
-    public static int getNMAXBICIS() {
-        return NMAXBICIS;
-    }
+    /*public static int getNMAXBICISFURGONETA() {
+        return NMAXBICISFURGONETA;
+    }*/
     public int getnEstaciones() {
         return nEstaciones;
     }

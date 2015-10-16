@@ -11,6 +11,10 @@ public class Furgoneta {
     //es al reves, un viaje viene dado por una furgoneta ademas de los destinos y el origen
     //private ArrayList<Viaje> viajes;
     private int kilometrosRecorridos = 0;
+    
+    public Furgoneta(int id) {
+        this.id = id;
+    }
 
     public void Furgoneta(int id, int coordx, int coordy, int Nbicis) {
         this.id = id;
