@@ -346,7 +346,14 @@ public class Escenario {
             if (v.getDest1x() == x && v.getDest1y() == y) bt = v.getNBDest1();
             else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
         }
-        
+        return bt;
+    }
+    
+    public int Beneficios() {
+        int beneficios = 0;
+        for(Viaje v: viajes) beneficios -= CosteViaje(v);
+        for (Estacion e: estaciones) beneficios += CosteEstacion(e);
+        return beneficios;
     }
 
     private int getnFurgonetas() {
