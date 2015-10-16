@@ -315,5 +315,30 @@ public class Escenario {
     private int calcDistancia(int x1, int y1, int x2, int y2) {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
+    
+    public int CosteViaje(Viaje v) {
+        int ox = v.getOrigenx();
+        int oy = v.getOrigeny();
+        int d1x = v.getDest1x();
+        int d1y = v.getDest1y();
+        int result = Math.abs(ox-d1x) + Math.abs(oy-d1y);
+        result = result*v.getCosteTramo1();
+        int d2x = v.getDest2x();
+        int d2y = v.getDest2y();
+        int aux = Math.abs(d1x-d2x) + Math.abs(d1y-d2y);
+        aux = aux*v.getCosteTramo2();
+        return result + aux;
+    }
+    
+    public int CosteEstacion(Estacion e) {
+        int x = e.getCoordX();
+        int y = e.getCoordY();
+        int bt = 0;
+        for (Viaje v : viajes) {
+            if (v.getDest1x() == x && v.getDest1y() == y) bt = v.getNBDest1();
+            else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
+        }
+        
+    }
 
 }
