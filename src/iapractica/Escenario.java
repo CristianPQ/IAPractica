@@ -90,10 +90,17 @@ public class Escenario {
 
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
+        nBicicletas = clone.getnBicicletas();
+        nFurgonetas = clone.getnFurgonetas();
         estaciones = clone.getEstaciones();
-        /*for (Gasolinera g : clone.getGasolineras()) {
-         gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
-         }*/
+        for (Estacion e : clone.getEstaciones()) {
+            Estacion j = new Estacion(e.getCoordX(), e.getCoordY());
+            j.setNumBicicletasNoUsadas(e.getNumBicicletasNoUsadas());
+            j.setNumBicicletasNext(e.getNumBicicletasNext());
+            j.setDemanda(e.getDemanda());
+            estaciones.add(j);
+        }
+        
         //viajes = new ArrayList(clone.getViajes().size());
         //for (Viaje v : clone.getViajes()) {
         //    viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
@@ -254,23 +261,24 @@ public class Escenario {
         return kilometros;
     }
 
-        public static int getNUMEROMAXIMOVIAJES() {
+    public static int getNUMEROMAXIMOVIAJES() {
         return NUMEROMAXIMOVIAJES;
     }
 
     /*public static int getNMAXBICISFURGONETA() {
         return NMAXBICISFURGONETA;
     }*/
+    
+    public int getnBicicletas() {
+        return nBicicletas;
+    }
+    
     public int getnEstaciones() {
         return nEstaciones;
     }
 
     public Estaciones getEstaciones() {
         return estaciones;
-    }
-
-    public ArrayList<Furgoneta> getFurgonetas() {
-        return furgonetas;
     }
 
     public ArrayList<Viaje> getViajes() {
@@ -339,6 +347,10 @@ public class Escenario {
             else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
         }
         
+    }
+
+    private int getnFurgonetas() {
+        return nFurgonetas;
     }
 
 }
