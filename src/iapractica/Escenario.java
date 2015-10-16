@@ -332,6 +332,7 @@ public class Escenario {
         return beneficio - (getKilometros() * PRECIOKILOMETRO);
     }
 
+    
     /**
      * Revisar si la formula está correcta
      */
