@@ -144,17 +144,7 @@ public class Escenario {
         int beneficio = 0;
         switch (z) {
             case 0:
-
-                //que hace exactamente este for?
-                for (Viaje v : viajes) {
-                    if (v.getIDFurgoneta() != -1) {
-                        beneficio += v.getBeneficioHoy();
-                    } else {
-                        beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
-                    }
-                }
-                return -1 * (int) Math.round(beneficio - (getKilometros()/* * PRECIOKILOMETRO*/));
-
+                return Beneficios();
             case 1:
                 for (Viaje v : viajes) {
                     if (v.getIDFurgoneta() != -1) {
