@@ -21,6 +21,7 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
+    private Estaciones estaciones;
     private TreeMap<Integer, Integer> estacionesSinDemanda;
     private TreeMap<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
@@ -47,11 +48,11 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
+        estaciones = new Estaciones(e, b, dem, seed);
         
-        for (int i = 0; i < estacionesGeneradas.size(); i++) {
+        for (int i = 0; i < estaciones.size(); i++) {
         
-        int demanda = estacionesGeneradas.get(i).getDemanda();
+        int demanda = estaciones.get(i).getDemanda();
         estacionesSinDemanda = new HashMap<String, Integer>();
         }
         int prueba = 1;
@@ -86,10 +87,9 @@ public class Escenario {
         }
     }
 
-    //public Escenario(Escenario clone) {
-        //nEstaciones = clone.getnEstaciones();
-        //nCentrosDistribucion = clone.getnCentrosDistribucion();
-        //estaciones = clone.getEstaciones();
+    public Escenario(Escenario clone) {
+        nEstaciones = clone.getnEstaciones();
+        estaciones = clone.getEstaciones();
         /*for (Gasolinera g : clone.getGasolineras()) {
          gasolineras.add(new Gasolinera(g.getId(), g.getX(), g.getY()));
          }*/
@@ -107,7 +107,7 @@ public class Escenario {
             }*/
             //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
         //}
-    //}
+    }
 
     //Falta implementar
         public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
