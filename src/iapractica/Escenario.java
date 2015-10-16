@@ -1,4 +1,3 @@
-
 package iapractica;
 //PRUEBA GITHUB
 /*
@@ -6,6 +5,7 @@ package iapractica;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 import IA.Bicing.Estacion;
 import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
@@ -34,8 +34,8 @@ public class Escenario {
      * Constructor de la representacion del estado propuesto, con semilla
      * aleatoria
      *
-     * 
-     * 
+     *
+     *
      * @param e Numero de estaciones
      * @param b Numero de bicicletas
      * @param f Numero de furgonetas
@@ -50,30 +50,44 @@ public class Escenario {
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
-        
-        for (int i = 0; i < estaciones.size(); i++) {
-        
-        int demanda = estaciones.get(i).getDemanda();
-        estacionesSinDemanda = new HashMap<String, Integer>();
-        }
-        int prueba = 1;
-        
-        for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta(i+1));
-        }
-        
-        
-        
-    }
+        estacionesSinDemanda = new TreeMap<Integer, Integer>();
+        estacionesConDemanda = new TreeMap<Integer, Integer>();
 
-    /**
-     * Constructor de la representacion del estado propuesto, con semilla dada
-     *
-     * @param e Numero de estaciones
-     * @param b Numero de bicicletas
-     * @param f Numero de furgonetas
-     */
-    public Escenario(int e, int b, int f, int dem,int seed) {
+        for (int i = 0; i < estaciones.size(); i++) {
+
+            int actuales = estaciones.get(i).getNumBicicletasNoUsadas();
+            int next = estaciones.get(i).getNumBicicletasNext();
+            int demanda = estaciones.get(i).getDemanda();
+
+            int faltan = (demanda - next);
+
+            if (faltan > 0) {
+                estacionesConDemanda.put(new Integer(i), new Integer(faltan));
+            } else {
+
+                int disponibles = actuales - (demanda - (next - actuales));
+
+                if (disponibles > 0) {
+                    estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
+                }
+            }
+        }
+            int prueba = 1;
+
+            for (int i = 0; i < f; i++) {
+                furgonetas.add(new Furgoneta(i + 1));
+            }
+
+        }
+        /**
+         * Constructor de la representacion del estado propuesto, con semilla
+         * dada
+         *
+         * @param e Numero de estaciones
+         * @param b Numero de bicicletas
+         * @param f Numero de furgonetas
+         */
+    public Escenario(int e, int b, int f, int dem, int seed) {
 
         nEstaciones = e;
         nBicicletas = b;
@@ -84,7 +98,7 @@ public class Escenario {
         Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
 
         for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta(i+1));
+            furgonetas.add(new Furgoneta(i + 1));
         }
     }
 
@@ -101,50 +115,52 @@ public class Escenario {
         //furgonetas = new ArrayList(clone.getFurgonetas().size());
         //for (Furgoneta f : clone.getFurgonetas()) {
             /*ArrayList<Viaje> newViajes = new int[5][2];
-            ArrayList<Viaje> oldViajes = f.getViajes();
-            for (int i = 0; i < oldViajes.length; i++) {
-                newViajes[i][0] = oldViajes[i][0];
-                newViajes[i][1] = oldViajes[i][1];
-            }*/
-            //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
+         ArrayList<Viaje> oldViajes = f.getViajes();
+         for (int i = 0; i < oldViajes.length; i++) {
+         newViajes[i][0] = oldViajes[i][0];
+         newViajes[i][1] = oldViajes[i][1];
+         }*/
+        //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
         //}
     }
 
     //Falta implementar
-        public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
-        
-            return true;
-            
-        }
-    
+    public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
+
+        return true;
+
+    }
+
     public int heuristicValue(int z) {
 
         // Cambiar formula
-        
         int beneficio = 0;
         switch (z) {
-         case 0:
-             
-         //que hace exactamente este for?
-         for (Viaje v : viajes) {
-            if (v.getIDFurgoneta() != -1) {
-                beneficio += v.getBeneficioHoy();
-            } else {
-                beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
-            }
-         }
-         return -1 * (int) Math.round(beneficio - (getKilometros()/* * PRECIOKILOMETRO*/));
+            case 0:
 
-         case 1:
-         for (Viaje v : viajes) {
-            if (v.getIDFurgoneta() != -1) {
-                beneficio += v.getBeneficioHoy() - v.getBeneficioManana();
-            }
-         }
-         return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() /** PRECIOKILOMETRO*/));
-         default:
-         return 500;
-         }
+                //que hace exactamente este for?
+                for (Viaje v : viajes) {
+                    if (v.getIDFurgoneta() != -1) {
+                        beneficio += v.getBeneficioHoy();
+                    } else {
+                        beneficio -= (v.getBeneficioHoy() - v.getBeneficioManana());
+                    }
+                }
+                return -1 * (int) Math.round(beneficio - (getKilometros()/* * PRECIOKILOMETRO*/));
+
+            case 1:
+                for (Viaje v : viajes) {
+                    if (v.getIDFurgoneta() != -1) {
+                        beneficio += v.getBeneficioHoy() - v.getBeneficioManana();
+                    }
+                }
+                return -1 * (int) Math.round(0.9 * beneficio - 0.1 * (getKilometros() /**
+                         * PRECIOKILOMETRO
+                         */
+                        ));
+            default:
+                return 500;
+        }
     }
 
     /**
@@ -191,8 +207,8 @@ public class Escenario {
 
         return ret;
     }
-    
-        public ArrayList getSucesorAleatorio() {
+
+    public ArrayList getSucesorAleatorio() {
         ArrayList<Successor> ret = new ArrayList();
 
         int i = r.nextInt(viajes.size());
@@ -241,7 +257,7 @@ public class Escenario {
 
         return ret;
     }
-    
+
     public boolean isGoalState() {
         return (false);
     }
@@ -254,13 +270,13 @@ public class Escenario {
         return kilometros;
     }
 
-        public static int getNUMEROMAXIMOVIAJES() {
+    public static int getNUMEROMAXIMOVIAJES() {
         return NUMEROMAXIMOVIAJES;
     }
 
     /*public static int getNMAXBICISFURGONETA() {
-        return NMAXBICISFURGONETA;
-    }*/
+     return NMAXBICISFURGONETA;
+     }*/
     public int getnEstaciones() {
         return nEstaciones;
     }
@@ -276,10 +292,9 @@ public class Escenario {
     public ArrayList<Viaje> getViajes() {
         return viajes;
     }
-    
+
     // No se usan de momento:
-    
-        public int getPeticionesServidas() {
+    public int getPeticionesServidas() {
         int peticionesServidas = 0;
         for (Viaje peticion : viajes) {
             if (peticion.getIdFurgoneta() != -1) {
@@ -298,8 +313,8 @@ public class Escenario {
         }
         return peticionesServidas;
     }
-    
-       public double calcularBeneficio() {
+
+    public double calcularBeneficio() {
         double beneficio = 0;
         for (Viaje v : viajes) {
             if (v.getIdFurgoneta() != -1) {
