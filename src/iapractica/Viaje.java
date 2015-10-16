@@ -3,29 +3,48 @@ package iapractica;
 public class Viaje {
     //public int id; viene dado por el origen dest1 y dest2, em principio no hace falta un ID
     
-    private int origen;
-    private int dest1;
-    private int dest2;
+    private int origenx;
+    private int origeny;
+    private int dest1x;
+    private int dest1y;
+    private int dest2x;
+    private int dest2y;
     private int NBDest1;
     private int NBDest2;
     
-    public Viaje(int origen, int dest1, int dest2) {
-        this.origen = origen;
-        this.dest1 = dest1;
-        this.dest2 = dest2;
+    public Viaje(int origenx, int origeny, int dest1x, int dest1y, int dest2x, int dest2y) {
+        this.origenx = origenx;
+        this.origeny = origeny;
+        this.dest1x = dest1x;
+        this.dest1y = dest2y;
+        this.dest2x = dest2x;
+        this.dest2y = dest2y;
     }
     
-    public int getOrigen() {
-        return origen;
+    public int getOrigenx() {
+        return origenx;
     }
     
-    public int getDest1() {
-        return dest1;
+    public int getOrigeny() {
+        return origeny;
     }
     
-    public int getDest2() {
-        return dest2;
+    public int getDest1x() {
+        return dest1x;
     }
+    
+    public int getDest1y() {
+        return dest1y;
+    }
+    
+    public int getDest2x() {
+        return dest2x;
+    }
+    
+    public int getDest2y() {
+        return dest2y;
+    }
+    
     public int getNBDest1() {
         return NBDest1;
     }
@@ -44,16 +63,38 @@ public class Viaje {
         return coste;
     }
     
-    public void setOrigen(int orig) {
-        origen = orig;
+    public void setOrigenx(int orig) {
+        origenx = orig;
     }
     
-    public void setDest1(int dest) {
-        dest1 = dest;
+    public void setOrigeny(int orig) {
+        origeny = orig;
     }
     
-    public void setDest2(int dest) {
-         dest2 = dest;
+    public void setDest1x(int dest) {
+        dest1x = dest;
+    }
+    
+    
+    public void setDest1y(int dest) {
+        dest1y = dest;
+    }
+    
+    
+    public void setDest2x(int dest) {
+        dest2x = dest;
+    }
+    
+    public void setDest2y(int dest) {
+         dest2y = dest;
+    }
+    
+    public void setNBDest1(int b) {
+        NBDest1 = b;
+    }
+    
+    public void setNBDest2(int b) {
+        NBDest2 = b;
     }
     
     public int getBeneficioHoy() {
