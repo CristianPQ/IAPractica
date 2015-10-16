@@ -11,9 +11,13 @@ import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Escenario {
 
@@ -52,6 +56,40 @@ public class Escenario {
         estaciones = new Estaciones(e, b, dem, seed);
         estacionesSinDemanda = new TreeMap<Integer, Integer>();
         estacionesConDemanda = new TreeMap<Integer, Integer>();
+        
+        
+        estacionesSinDemanda = new TreeMap<Integer, Integer>();
+        estacionesConDemanda = new TreeMap<Integer, Integer>();
+
+        HashMap map = new HashMap();
+        ValueComparator bvc = new ValueComparator(map);
+        
+        for (int i = 0; i < estaciones.size(); i++) {
+
+            int actuales = estaciones.get(i).getNumBicicletasNoUsadas();
+            int next = estaciones.get(i).getNumBicicletasNext();
+            int demanda = estaciones.get(i).getDemanda();
+
+            int faltan = (demanda - next);
+
+            if (faltan > 0) {
+                map.put(new Integer(i), new Integer(faltan));
+            } else {
+
+                int disponibles = actuales - (demanda - (next - actuales));
+
+                if (disponibles > 0) {
+                    estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
+                }
+            }
+        }
+        int prueba = 1;
+
+        TreeMap sorted_map = new TreeMap(bvc);
+
+        System.out.println("unsorted map: " + map);
+        sorted_map.putAll(map);
+        System.out.println("results: " + sorted_map);
 
         for (int i = 0; i < estaciones.size(); i++) {
 
@@ -72,21 +110,24 @@ public class Escenario {
                 }
             }
         }
-            int prueba = 1;
+        int prueba = 1;
 
-            for (int i = 0; i < f; i++) {
-                furgonetas.add(new Furgoneta(i + 1));
-            }
+        entriesSortedByValues(estacionesConDemanda);
+        entriesSortedByValues(estacionesConDemanda);
 
+        for (int i = 0; i < f; i++) {
+            furgonetas.add(new Furgoneta(i + 1));
         }
-        /**
-         * Constructor de la representacion del estado propuesto, con semilla
-         * dada
-         *
-         * @param e Numero de estaciones
-         * @param b Numero de bicicletas
-         * @param f Numero de furgonetas
-         */
+
+    }
+
+    /**
+     * Constructor de la representacion del estado propuesto, con semilla dada
+     *
+     * @param e Numero de estaciones
+     * @param b Numero de bicicletas
+     * @param f Numero de furgonetas
+     */
     public Escenario(int e, int b, int f, int dem, int seed) {
 
         nEstaciones = e;
@@ -114,7 +155,7 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-        
+
         //viajes = new ArrayList(clone.getViajes().size());
         //for (Viaje v : clone.getViajes()) {
         //    viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
@@ -282,13 +323,12 @@ public class Escenario {
     }
 
     /*public static int getNMAXBICISFURGONETA() {
-        return NMAXBICISFURGONETA;
-    }*/
-    
+     return NMAXBICISFURGONETA;
+     }*/
     public int getnBicicletas() {
         return nBicicletas;
     }
-    
+
     public int getnEstaciones() {
         return nEstaciones;
     }
@@ -338,41 +378,67 @@ public class Escenario {
     private int calcDistancia(int x1, int y1, int x2, int y2) {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
-    
+
     public int CosteViaje(Viaje v) {
         int ox = v.getOrigenx();
         int oy = v.getOrigeny();
         int d1x = v.getDest1x();
         int d1y = v.getDest1y();
-        int result = Math.abs(ox-d1x) + Math.abs(oy-d1y);
-        result = result*v.getCosteTramo1();
+        int result = Math.abs(ox - d1x) + Math.abs(oy - d1y);
+        result = result * v.getCosteTramo1();
         int d2x = v.getDest2x();
         int d2y = v.getDest2y();
-        int aux = Math.abs(d1x-d2x) + Math.abs(d1y-d2y);
-        aux = aux*v.getCosteTramo2();
+        int aux = Math.abs(d1x - d2x) + Math.abs(d1y - d2y);
+        aux = aux * v.getCosteTramo2();
         return result + aux;
     }
-    
+
     public int CosteEstacion(Estacion e) {
         int x = e.getCoordX();
         int y = e.getCoordY();
         int bt = 0;
         for (Viaje v : viajes) {
-            if (v.getDest1x() == x && v.getDest1y() == y) bt = v.getNBDest1();
-            else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
+            if (v.getDest1x() == x && v.getDest1y() == y) {
+                bt = v.getNBDest1();
+            } else if (v.getDest2x() == x && v.getDest2y() == y) {
+                bt = v.getNBDest2();
+            }
         }
         return bt;
     }
-    
+
     public int Beneficios() {
         int beneficios = 0;
-        for(Viaje v: viajes) beneficios -= CosteViaje(v);
-        for (Estacion e: estaciones) beneficios += CosteEstacion(e);
+        for (Viaje v : viajes) {
+            beneficios -= CosteViaje(v);
+        }
+        for (Estacion e : estaciones) {
+            beneficios += CosteEstacion(e);
+        }
         return beneficios;
     }
 
     private int getnFurgonetas() {
         return nFurgonetas;
+    }
+
+    public static class ValueComparator implements Comparator {
+
+        Map base;
+
+        public ValueComparator(Map base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(Object a, Object b) {
+            if ((Integer) base.get(a) >= (Integer) base.get(b)) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
     }
 
 }

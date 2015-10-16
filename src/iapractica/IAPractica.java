@@ -6,7 +6,12 @@
 package iapractica;
 
 import IA.Bicing.Estaciones;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  *
@@ -30,5 +35,8 @@ public class IAPractica {
 
         //Escenario e = new Escenario(10,50,1,1);
     }
+    
+    
 
 }
+
