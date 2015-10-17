@@ -571,6 +571,8 @@ public class Escenario {
         //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
         //}
     }
+    
+    public void generarEstadoInicialRandom()
 
     //Falta implementar
     public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
