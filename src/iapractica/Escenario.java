@@ -118,21 +118,8 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-
-        //viajes = new ArrayList(clone.getViajes().size());
-        //for (Viaje v : clone.getViajes()) {
-        //    viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
-        //}
-        //furgonetas = new ArrayList(clone.getFurgonetas().size());
-        //for (Furgoneta f : clone.getFurgonetas()) {
-            /*ArrayList<Viaje> newViajes = new int[5][2];
-         ArrayList<Viaje> oldViajes = f.getViajes();
-         for (int i = 0; i < oldViajes.length; i++) {
-         newViajes[i][0] = oldViajes[i][0];
-         newViajes[i][1] = oldViajes[i][1];
-         }*/
-        //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
-        //}
+        estacionesSinDemanda = clone.getE
+        
     }
     
     public void generarEstadoInicialRandom() {
@@ -387,6 +374,14 @@ public class Escenario {
                 return 1;
             }
         }
+    }
+    
+    public TreeMap<Integer,Integer> getEstacionesConDemanda() {
+        return estacionesConDemanda;
+    }
+    
+    public TreeMap<Integer,Integer> getEstacionesSinDemanda() {
+        return estacionesSinDemanda;
     }
 
 }
