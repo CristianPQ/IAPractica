@@ -53,6 +53,8 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
+        int prueba;
+        
         estaciones = new Estaciones(e, b, dem, seed);
         estacionesSinDemanda = new TreeMap<Integer, Integer>();
         estacionesConDemanda = new TreeMap<Integer, Integer>();
