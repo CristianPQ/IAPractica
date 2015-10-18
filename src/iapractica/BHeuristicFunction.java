@@ -7,7 +7,7 @@ public class BHeuristicFunction implements HeuristicFunction {
     @Override
     public double getHeuristicValue(Object state) {
         Escenario e = (Escenario) state;
-        return e.heuristicValue(0);
+        return e.valorHeuristico(0);
     }
 
 }

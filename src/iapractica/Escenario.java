@@ -167,19 +167,44 @@ public class Escenario {
         return true;
 
     }
-
-    public int heuristicValue(int z) {
-
-        // Cambiar formula
-        int beneficio = 0;
-        switch (z) {
-            case 0:
-                return Beneficios();
-            case 1:
-                return 500;
-            default:
-                return 500;
+       public void operadorOrigenesViajes(Viaje v, Estacion e) {
+        //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
+            v.setOrigenx(e.getCoordX());
+            v.setOrigeny(e.getCoordY());
+        //}
+    }
+    
+    public v  oid operadorDestino1(Viaje v, Estacion e) {
+        if(v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
+            if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
+                v.setDest1x(e.getCoordX());
+                v.setDest1y(e.getCoordY());
+            }
         }
+    }
+    public void operadorDestino2(Viaje v, Estacion e) {
+        if(v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
+            if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
+                v.setDest2x(e.getCoordX());
+                v.setDest2y(e.getCoordY());
+            }
+        }
+    }
+
+     public int valorHeuristico(int h) {
+// Cambiar formula
+        int beneficio = 0;
+        switch (h) {
+            case 0:
+                for (Estacion e: estaciones) {
+                    beneficio += beneficioEstacion(e); 
+                }
+            case 1:
+                for (Viaje v: viajes) {
+                    beneficio += beneficioViaje(v);
+                }
+        }
+        return beneficio;
     }
 
     /**
@@ -350,7 +375,7 @@ public class Escenario {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
 
-    public int CosteViaje(Viaje v) {
+    public int beneficioViaje(Viaje v) {
         int ox = v.getOrigenx();
         int oy = v.getOrigeny();
         int d1x = v.getDest1x();
@@ -364,7 +389,7 @@ public class Escenario {
         return result + aux;
     }
 
-    public int CosteEstacion(Estacion e) {
+    public int beneficioEstacion(Estacion e) {
         int x = e.getCoordX();
         int y = e.getCoordY();
         int bt = 0;
@@ -381,10 +406,10 @@ public class Escenario {
     public int Beneficios() {
         int beneficios = 0;
         for (Viaje v : viajes) {
-            beneficios -= CosteViaje(v);
+            beneficios = beneficioViaje(v);
         }
         for (Estacion e : estaciones) {
-            beneficios += CosteEstacion(e);
+            beneficios += beneficioEstacion(e);
         }
         return beneficios;
     }
