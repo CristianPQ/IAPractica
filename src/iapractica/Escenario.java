@@ -53,11 +53,13 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        int prueba;
-        
         estaciones = new Estaciones(e, b, dem, seed);
-        estacionesSinDemanda = new TreeMap<Integer, Integer>();
-        estacionesConDemanda = new TreeMap<Integer, Integer>();
+        
+        HashMap tmpConDemanda = new HashMap();
+        HashMap tmpSinDemanda = new HashMap();
+        
+        ValueComparator bvc = new ValueComparator(tmpConDemanda);
+        ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
 
         for (int i = 0; i < estaciones.size(); i++) {
 
@@ -68,21 +70,22 @@ public class Escenario {
             int faltan = (demanda - next);
 
             if (faltan > 0) {
-                estacionesConDemanda.put(new Integer(i), new Integer(faltan));
+                tmpConDemanda.put(new Integer(i), new Integer(faltan));
             } else {
 
                 int disponibles = actuales - (demanda - (next - actuales));
 
                 if (disponibles > 0) {
-                    estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
+                    tmpSinDemanda.put(new Integer(i), new Integer(disponibles));
                 }
             }
         }
-        int prueba = 1;
-
-        for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta(i + 1));
-        }
+        
+        estacionesSinDemanda = new TreeMap(bvc);
+        estacionesConDemanda = new TreeMap(bvc2);
+        
+        estacionesSinDemanda.putAll(tmpSinDemanda);
+        estacionesConDemanda.putAll(tmpConDemanda);
 
     }
 
@@ -101,11 +104,41 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
+        estaciones = new Estaciones(e, b, dem, seed);
 
-        for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta(i + 1));
+       
+        HashMap tmpConDemanda = new HashMap();
+        HashMap tmpSinDemanda = new HashMap();
+        
+        ValueComparator bvc = new ValueComparator(tmpConDemanda);
+        ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
+
+        for (int i = 0; i < estaciones.size(); i++) {
+
+            int actuales = estaciones.get(i).getNumBicicletasNoUsadas();
+            int next = estaciones.get(i).getNumBicicletasNext();
+            int demanda = estaciones.get(i).getDemanda();
+
+            int faltan = (demanda - next);
+
+            if (faltan > 0) {
+                tmpConDemanda.put(new Integer(i), new Integer(faltan));
+            } else {
+
+                int disponibles = actuales - (demanda - (next - actuales));
+
+                if (disponibles > 0) {
+                    tmpSinDemanda.put(new Integer(i), new Integer(disponibles));
+                }
+            }
         }
+        
+        estacionesSinDemanda = new TreeMap(bvc);
+        estacionesConDemanda = new TreeMap(bvc2);
+        
+        estacionesSinDemanda.putAll(tmpSinDemanda);
+        estacionesConDemanda.putAll(tmpConDemanda);
+
     }
     
     public Escenario(Escenario clone) {
@@ -385,5 +418,6 @@ public class Escenario {
     public TreeMap<Integer,Integer> getEstacionesSinDemanda() {
         return estacionesSinDemanda;
     }
+
 
 }
