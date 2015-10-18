@@ -11,9 +11,13 @@ import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Escenario {
 
@@ -50,8 +54,12 @@ public class Escenario {
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
-        estacionesSinDemanda = new TreeMap<Integer, Integer>();
-        estacionesConDemanda = new TreeMap<Integer, Integer>();
+        
+        HashMap tmpConDemanda = new HashMap();
+        HashMap tmpSinDemanda = new HashMap();
+        
+        ValueComparator bvc = new ValueComparator(tmpConDemanda);
+        ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
 
         for (int i = 0; i < estaciones.size(); i++) {
 
@@ -62,31 +70,32 @@ public class Escenario {
             int faltan = (demanda - next);
 
             if (faltan > 0) {
-                estacionesConDemanda.put(new Integer(i), new Integer(faltan));
+                tmpConDemanda.put(new Integer(i), new Integer(faltan));
             } else {
 
                 int disponibles = actuales - (demanda - (next - actuales));
 
                 if (disponibles > 0) {
-                    estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
+                    tmpSinDemanda.put(new Integer(i), new Integer(disponibles));
                 }
             }
         }
-            int prueba = 1;
+        
+        estacionesSinDemanda = new TreeMap(bvc);
+        estacionesConDemanda = new TreeMap(bvc2);
+        
+        estacionesSinDemanda.putAll(tmpSinDemanda);
+        estacionesConDemanda.putAll(tmpConDemanda);
 
-            for (int i = 0; i < f; i++) {
-                furgonetas.add(new Furgoneta(i + 1));
-            }
+    }
 
-        }
-        /**
-         * Constructor de la representacion del estado propuesto, con semilla
-         * dada
-         *
-         * @param e Numero de estaciones
-         * @param b Numero de bicicletas
-         * @param f Numero de furgonetas
-         */
+    /**
+     * Constructor de la representacion del estado propuesto, con semilla dada
+     *
+     * @param e Numero de estaciones
+     * @param b Numero de bicicletas
+     * @param f Numero de furgonetas
+     */
     public Escenario(int e, int b, int f, int dem, int seed) {
 
         nEstaciones = e;
@@ -95,13 +104,43 @@ public class Escenario {
         furgonetas = new ArrayList();
         viajes = new ArrayList();
 
-        Estaciones estacionesGeneradas = new Estaciones(e, b, dem, seed);
+        estaciones = new Estaciones(e, b, dem, seed);
 
-        for (int i = 0; i < f; i++) {
-            furgonetas.add(new Furgoneta(i + 1));
+       
+        HashMap tmpConDemanda = new HashMap();
+        HashMap tmpSinDemanda = new HashMap();
+        
+        ValueComparator bvc = new ValueComparator(tmpConDemanda);
+        ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
+
+        for (int i = 0; i < estaciones.size(); i++) {
+
+            int actuales = estaciones.get(i).getNumBicicletasNoUsadas();
+            int next = estaciones.get(i).getNumBicicletasNext();
+            int demanda = estaciones.get(i).getDemanda();
+
+            int faltan = (demanda - next);
+
+            if (faltan > 0) {
+                tmpConDemanda.put(new Integer(i), new Integer(faltan));
+            } else {
+
+                int disponibles = actuales - (demanda - (next - actuales));
+
+                if (disponibles > 0) {
+                    tmpSinDemanda.put(new Integer(i), new Integer(disponibles));
+                }
+            }
         }
-    }
+        
+        estacionesSinDemanda = new TreeMap(bvc);
+        estacionesConDemanda = new TreeMap(bvc2);
+        
+        estacionesSinDemanda.putAll(tmpSinDemanda);
+        estacionesConDemanda.putAll(tmpConDemanda);
 
+    }
+    
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
         nBicicletas = clone.getnBicicletas();
@@ -114,23 +153,13 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-        //viajes = new ArrayList(clone.getViajes().size());
-        //for (Viaje v : clone.getViajes()) {
-        //    viajes.add(new Viaje(/*v.getId(), */v.getNBsol(), v.getOrigen(), v.getDest1(), v.getDest2()));
-        //}
-        //furgonetas = new ArrayList(clone.getFurgonetas().size());
-        //for (Furgoneta f : clone.getFurgonetas()) {
-            /*ArrayList<Viaje> newViajes = new int[5][2];
-         ArrayList<Viaje> oldViajes = f.getViajes();
-         for (int i = 0; i < oldViajes.length; i++) {
-         newViajes[i][0] = oldViajes[i][0];
-         newViajes[i][1] = oldViajes[i][1];
-         }*/
-        //furgonetas.add(new Furgoneta(/*c.getId(), c.getX(), c.getY(), newViajes, c.getKilometrosRecorridos()*/));
-        //}
+        estacionesSinDemanda = clone.getE
+        
     }
     
-    public void generarEstadoInicialRandom(){}
+    public void generarEstadoInicialRandom() {
+        
+    }
 
     //Falta implementar
     public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
@@ -138,46 +167,19 @@ public class Escenario {
         return true;
 
     }
-    
-    public void operadorOrigenesViajes(Viaje v, Estacion e) {
-        //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
-            v.setOrigenx(e.getCoordX());
-            v.setOrigeny(e.getCoordY());
-        //}
-    }
-    
-    public v  oid operadorDestino1(Viaje v, Estacion e) {
-        if(v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-            if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-                v.setDest1x(e.getCoordX());
-                v.setDest1y(e.getCoordY());
-            }
-        }
-    }
-    public void operadorDestino2(Viaje v, Estacion e) {
-        if(v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-            if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-                v.setDest2x(e.getCoordX());
-                v.setDest2y(e.getCoordY());
-            }
-        }
-    }
-    
 
-    public int valorHeuristico(int h) {
-// Cambiar formula
+    public int heuristicValue(int z) {
+
+        // Cambiar formula
         int beneficio = 0;
-        switch (h) {
+        switch (z) {
             case 0:
-                for (Estacion e: estaciones) {
-                    beneficio += beneficioEstacion(e); 
-                }
+                return Beneficios();
             case 1:
-                for (Viaje v: viajes) {
-                    beneficio += beneficioViaje(v);
-                }
+                return 500;
+            default:
+                return 500;
         }
-        return beneficio;
     }
 
     /**
@@ -292,13 +294,12 @@ public class Escenario {
     }
 
     /*public static int getNMAXBICISFURGONETA() {
-        return NMAXBICISFURGONETA;
-    }*/
-    
+     return NMAXBICISFURGONETA;
+     }*/
     public int getnBicicletas() {
         return nBicicletas;
     }
-    
+
     public int getnEstaciones() {
         return nEstaciones;
     }
@@ -348,43 +349,75 @@ public class Escenario {
     private int calcDistancia(int x1, int y1, int x2, int y2) {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
-    
-    public int beneficioViaje(Viaje v) {
+
+    public int CosteViaje(Viaje v) {
         int ox = v.getOrigenx();
         int oy = v.getOrigeny();
         int d1x = v.getDest1x();
         int d1y = v.getDest1y();
-        int result = Math.abs(ox-d1x) + Math.abs(oy-d1y);
-        result = result*v.getCosteTramo1();
-        int beneficios = v.getNBDest1() - result;
+        int result = Math.abs(ox - d1x) + Math.abs(oy - d1y);
+        result = result * v.getCosteTramo1();
         int d2x = v.getDest2x();
         int d2y = v.getDest2y();
-        int aux = Math.abs(d1x-d2x) + Math.abs(d1y-d2y);
-        aux = aux*v.getCosteTramo2();
-        int beneficios2 = v.getNBDest2() - aux;
-        return beneficios + beneficios2;
+        int aux = Math.abs(d1x - d2x) + Math.abs(d1y - d2y);
+        aux = aux * v.getCosteTramo2();
+        return result + aux;
     }
-    
-    public int beneficioEstacion(Estacion e) {
+
+    public int CosteEstacion(Estacion e) {
         int x = e.getCoordX();
         int y = e.getCoordY();
         int bt = 0;
         for (Viaje v : viajes) {
-            if (v.getDest1x() == x && v.getDest1y() == y) bt = v.getNBDest1();
-            else if (v.getDest2x() == x && v.getDest2y()== y) bt = v.getNBDest2();
+            if (v.getDest1x() == x && v.getDest1y() == y) {
+                bt = v.getNBDest1();
+            } else if (v.getDest2x() == x && v.getDest2y() == y) {
+                bt = v.getNBDest2();
+            }
         }
         return bt;
     }
-    
-    public int beneficios() {
+
+    public int Beneficios() {
         int beneficios = 0;
-        for(Viaje v: viajes) beneficios -= costeViaje(v);
+        for (Viaje v : viajes) {
+            beneficios -= CosteViaje(v);
+        }
+        for (Estacion e : estaciones) {
+            beneficios += CosteEstacion(e);
+        }
         return beneficios;
     }
 
     private int getnFurgonetas() {
         return nFurgonetas;
->>>>>>> origin/master
     }
+
+    public static class ValueComparator implements Comparator {
+
+        Map base;
+
+        public ValueComparator(Map base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(Object a, Object b) {
+            if ((Integer) base.get(a) >= (Integer) base.get(b)) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+    
+    public TreeMap<Integer,Integer> getEstacionesConDemanda() {
+        return estacionesConDemanda;
+    }
+    
+    public TreeMap<Integer,Integer> getEstacionesSinDemanda() {
+        return estacionesSinDemanda;
+    }
+
 
 }
