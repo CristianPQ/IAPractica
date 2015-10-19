@@ -1,3 +1,5 @@
+
+
 package iapractica;
 //PRUEBA GITHUB
 /*
@@ -151,7 +153,7 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-        //estacionesSinDemanda = clone.getE
+        estacionesSinDemanda = clone.getE
         
     }
 
@@ -251,26 +253,43 @@ public class Escenario {
 
     public void operadorOrigenesViajes(Viaje v, Estacion e) {
         //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
-        v.setOrigenx(e.getCoordX());
-        v.setOrigeny(e.getCoordY());
-        //}
+        if (e != null) {
+            v.setOrigenx(e.getCoordX());
+            v.setOrigeny(e.getCoordY());
+        }
+        else {
+            v.setOrigenx(-1);
+            v.setOrigeny(-1);
+        }
     }
 
     public void operadorDestino1(Viaje v, Estacion e) {
-        if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-            if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-                v.setDest1x(e.getCoordX());
-                v.setDest1y(e.getCoordY());
+        if (e != null) {
+            if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
+                if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
+                    v.setDest1x(e.getCoordX());
+                    v.setDest1y(e.getCoordY());
+                }
             }
+        }
+        else {
+            v.setDest1x(-1);
+            v.setDest1y(-1);
         }
     }
 
     public void operadorDestino2(Viaje v, Estacion e) {
-        if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-            if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-                v.setDest2x(e.getCoordX());
-                v.setDest2y(e.getCoordY());
+        if (e != null) {
+            if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
+                if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
+                    v.setDest2x(e.getCoordX());
+                    v.setDest2y(e.getCoordY());
+                }
             }
+        }
+        else {
+            v.setDest2x(-1);
+            v.setDest2y(-1);
         }
     }
 
@@ -302,10 +321,6 @@ public class Escenario {
         for (int i = 0; i < viajes.size(); i++) {
             for (int j = i + 1; j < viajes.size(); j++) {
                 Escenario e = new Escenario(this);
-                for(int k = 0; k < estacionesConDemanda.size(); ++k) {
-                    
-                }
-                
                 e.swapFurgonetas(i, j);
                 int idFurgonetaI = viajes.get(i).getIdFurgoneta();
                 int idFurgonetaJ = viajes.get(j).getIdFurgoneta();
@@ -422,8 +437,8 @@ public class Escenario {
 
     public ArrayList<Viaje> getViajes() {
         return viajes;
-    }/*
-
+    }
+    /*
     // No se usan de momento:
     public int getPeticionesServidas() {
         int peticionesServidas = 0;
@@ -453,8 +468,8 @@ public class Escenario {
             }
         }
         return beneficio - (getKilometros() * PRECIOKILOMETRO);
-    }*/
-
+    }
+    */
     /**
      * Revisar si la formula está correcta
      */
@@ -464,16 +479,19 @@ public class Escenario {
 
     public int beneficioViaje(Viaje v) {
         int ox = v.getOrigenx();
-        int oy = v.getOrigeny();
-        int d1x = v.getDest1x();
-        int d1y = v.getDest1y();
-        int result = Math.abs(ox - d1x) + Math.abs(oy - d1y);
-        result = result * v.getCosteTramo1();
-        int d2x = v.getDest2x();
-        int d2y = v.getDest2y();
-        int aux = Math.abs(d1x - d2x) + Math.abs(d1y - d2y);
-        aux = aux * v.getCosteTramo2();
-        return result + aux;
+        if(ox != -1) {
+            int oy = v.getOrigeny();
+            int d1x = v.getDest1x();
+            int d1y = v.getDest1y();
+            int result = Math.abs(ox - d1x) + Math.abs(oy - d1y);
+            result = result * v.getCosteTramo1();
+            int d2x = v.getDest2x();
+            int d2y = v.getDest2y();
+            int aux = Math.abs(d1x - d2x) + Math.abs(d1y - d2y);
+            aux = aux * v.getCosteTramo2();
+            return result + aux;
+        }
+        return 0;
     }
 
     public int beneficioEstacion(Estacion e) {
@@ -489,7 +507,6 @@ public class Escenario {
         }
         return bt;
     }
-
     public int Beneficios() {
         int beneficios = 0;
         for (Viaje v : viajes) {
