@@ -151,7 +151,7 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-        estacionesSinDemanda = clone.getE
+        //estacionesSinDemanda = clone.getE
         
     }
 
@@ -302,6 +302,10 @@ public class Escenario {
         for (int i = 0; i < viajes.size(); i++) {
             for (int j = i + 1; j < viajes.size(); j++) {
                 Escenario e = new Escenario(this);
+                for(int k = 0; k < estacionesConDemanda.size(); ++k) {
+                    
+                }
+                
                 e.swapFurgonetas(i, j);
                 int idFurgonetaI = viajes.get(i).getIdFurgoneta();
                 int idFurgonetaJ = viajes.get(j).getIdFurgoneta();
@@ -418,7 +422,7 @@ public class Escenario {
 
     public ArrayList<Viaje> getViajes() {
         return viajes;
-    }
+    }/*
 
     // No se usan de momento:
     public int getPeticionesServidas() {
@@ -449,7 +453,7 @@ public class Escenario {
             }
         }
         return beneficio - (getKilometros() * PRECIOKILOMETRO);
-    }
+    }*/
 
     /**
      * Revisar si la formula está correcta
@@ -552,12 +556,41 @@ public class Escenario {
         return sortedMap;
     }
 
-    public TreeMap<Integer, Integer> getEstacionesConDemanda() {
+    public Map<Integer, Integer> getEstacionesConDemanda() {
         return estacionesConDemanda;
     }
 
-    public TreeMap<Integer, Integer> getEstacionesSinDemanda() {
+    public Map<Integer, Integer> getEstacionesSinDemanda() {
         return estacionesSinDemanda;
+    }
+    
+    public void asignarOrigen(Viaje v, Estacion e) {
+        Estacion antE = getEstacion(v.getOrigenx(), v.getOrigeny());
+        if(antE.equals(e)) return;
+        int disponibles = bicisDisponibles(e);
+        int antDisponibles = bicisDisponibles(antE);
+        if(disponibles > antDisponibles) {
+            
+        }
+    }
+    
+    public int bicisDisponibles(Estacion e) {
+        return e.getNumBicicletasNoUsadas()- (e.getDemanda() - (e.getNumBicicletasNext() - e.getNumBicicletasNoUsadas()));
+    }
+    
+    public void asignarDestino1(Viaje v, Estacion e) {
+        
+    }
+    
+    public void asignarDestino2(Viaje v, Estacion e) {
+        
+    }
+    
+    public Estacion getEstacion(int X, int Y) {
+        for(Estacion e : estaciones) {
+            if(e.getCoordX() == X && e.getCoordY() == Y) return e;
+        }
+        return null;
     }
 
 }
