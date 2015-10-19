@@ -8,8 +8,8 @@ public class Viaje {
     private int dest1y;
     private int dest2x;
     private int dest2y;
-    private int NBDest1;
-    private int NBDest2;
+    private int NBDest1 = 0;
+    private int NBDest2 = 0;
     
     public Viaje(int origenx, int origeny, int dest1x, int dest1y, int dest2x, int dest2y) {
         this.origenx = origenx;

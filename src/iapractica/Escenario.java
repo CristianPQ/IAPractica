@@ -38,6 +38,7 @@ public class Escenario {
     //private TreeMap<Integer, Integer> estacionesSinDemanda;
     //private TreeMap<Integer, Integer> estacionesConDemanda;
     private Map<Integer, Integer> estacionesSinDemanda;
+    private ArrayList<Boolean> estacionesDisponibilidad;
     private Map<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
@@ -64,6 +65,10 @@ public class Escenario {
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
+        estacionesDisponibilidad = new ArrayList(e);
+        for(int m = 0; m < estacionesDisponibilidad.size(); ++m) {
+            estacionesDisponibilidad.add(m, Boolean.TRUE);
+        }
 
         estacionesConDemanda = new HashMap<Integer, Integer>();
         estacionesSinDemanda = new HashMap<Integer, Integer>();
@@ -153,7 +158,7 @@ public class Escenario {
             j.setDemanda(e.getDemanda());
             estaciones.add(j);
         }
-        estacionesSinDemanda = clone.getE
+        //estacionesSinDemanda = clone.getE
         
     }
 
@@ -581,13 +586,101 @@ public class Escenario {
         return estacionesSinDemanda;
     }
     
-    public void asignarOrigen(Viaje v, Estacion e) {
-        Estacion antE = getEstacion(v.getOrigenx(), v.getOrigeny());
-        if(antE.equals(e)) return;
-        int disponibles = bicisDisponibles(e);
-        int antDisponibles = bicisDisponibles(antE);
-        if(disponibles > antDisponibles) {
+    
+    //posE es la posicion en estaciones de la estacion que se le va a asignar
+    //v es el viaje donde se van a realizar als modificaciones
+    public void asignarOrigen(Viaje v,  int posE) {
+        if(!estacionesDisponibilidad.get(posE)) return;
+        
+        int posAnt = getEstacion(v.getOrigenx(), v.getOrigeny());
+        
+        if(posE >= 0) {
+            Estacion e = estaciones.get(posE);
+            Estacion eAnt = estaciones.get(posAnt);
+
+            int disponibles = estacionesSinDemanda.get(posE);
+            if(disponibles < 1) return;
+
+            int antNecesarias = v.getNBDest1() + v.getNBDest2();
             
+            int posDest1 = getEstacion(v.getDest1x(), v.getDest1y());
+            int demDest1 = estacionesConDemanda.get(posDest1);
+
+            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+            int demDest2 = estacionesConDemanda.get(posDest2);
+                
+            if(disponibles > antNecesarias) {
+                
+                int asignables = disponibles - antNecesarias;
+                if(demDest1 > 0) {
+                    if(asignables > demDest1) {
+                        asignables -= demDest1;
+                        v.setNBDest1(v.getNBDest1()+demDest1);
+                        estacionesConDemanda.put(posDest1, 0);
+                        if(demDest2 > 0) {
+                            if(asignables > demDest2) {
+                                asignables -= demDest2;
+                                v.setNBDest2(v.getNBDest2()+demDest2);
+                                estacionesConDemanda.put(posDest2, 0);
+                            }
+                            else {
+                                int resDest2 = demDest2-asignables;
+                                v.setNBDest2(v.getNBDest2()+demDest2-resDest2);
+                                estacionesConDemanda.put(posDest2, demDest2-asignables);
+                                asignables = 0;
+                            }
+                        }
+                    }
+                    else {
+                        int resDest1 = demDest1-asignables;
+                        v.setNBDest1(v.getNBDest1()+demDest1-resDest1);
+                        estacionesConDemanda.put(posDest1, resDest1);
+                        asignables = 0;
+                    }
+                }
+                else if(demDest2 > 0) {
+                    if(asignables > demDest2) {
+                        asignables -= demDest2;
+                        v.setNBDest2(v.getNBDest2()+demDest2);
+                        estacionesConDemanda.put(posDest2, 0);
+                    }
+                    else {
+                        int resDest2 = demDest2-asignables;
+                        v.setNBDest2(v.getNBDest2()+demDest2-resDest2);
+                        estacionesConDemanda.put(posDest2, demDest2-asignables);
+                        asignables = 0;
+                    }
+                }
+            }
+            else {
+                if(disponibles >= v.getNBDest1()) {
+                    int antInDest2 = v.getNBDest2();
+                    v.setNBDest2(disponibles - v.getNBDest1());
+                    estacionesConDemanda.put(posDest2, demDest2+antInDest2-v.getNBDest2());
+                }
+                else {
+                    estacionesConDemanda.put(posDest2, demDest2+v.getNBDest2());
+                    v.setNBDest2(0);
+                    int antInDest1 = v.getNBDest1();
+                    v.setNBDest1(disponibles);
+                    estacionesConDemanda.put(posDest1, demDest1+antInDest1-v.getNBDest1());
+                }
+            }
+            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            estacionesDisponibilidad.add(posE, Boolean.FALSE);
+            v.setOrigenx(e.getCoordX());
+            v.setOrigeny(e.getCoordY());
+        }
+        else {
+            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            v.setOrigenx(-1);
+            v.setOrigeny(-1);
+            v.setDest1x(-1);
+            v.setDest1y(-1);
+            v.setNBDest1(0);
+            v.setDest2x(-1);
+            v.setDest2y(-1);
+            v.setNBDest2(0);
         }
     }
     
@@ -595,19 +688,39 @@ public class Escenario {
         return e.getNumBicicletasNoUsadas()- (e.getDemanda() - (e.getNumBicicletasNext() - e.getNumBicicletasNoUsadas()));
     }
     
-    public void asignarDestino1(Viaje v, Estacion e) {
-        
+    public void asignarDestino1(Viaje v, int posE) {
+        int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
+        if(posE >= 0) {
+            Estacion e = estaciones.get(posE);
+            int eDemanda = -bicisDisponibles(e);
+            if(eDemanda < 1) return;
+            Estacion eAnt = estaciones.get(posAnt);
+            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            estacionesDisponibilidad.add(posE, Boolean.FALSE);
+            v.setDest1x(e.getCoordX());
+            v.setDest1y(e.getCoordY());
+            
+            //si no tiene dest 2
+            if(v.getDest2x() < 0) {
+                
+            }
+            
+        }
+        else {
+            
+        }
     }
     
     public void asignarDestino2(Viaje v, Estacion e) {
         
     }
     
-    public Estacion getEstacion(int X, int Y) {
-        for(Estacion e : estaciones) {
-            if(e.getCoordX() == X && e.getCoordY() == Y) return e;
+    public int getEstacion(int X, int Y) {
+        for(int i = 0; i < estaciones.size(); ++i) {
+            Estacion e = estaciones.get(i);
+            if(e.getCoordX() == X && e.getCoordY() == Y) return i;
         }
-        return null;
+        return -1;
     }
 
 }
