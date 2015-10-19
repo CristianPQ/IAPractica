@@ -8,11 +8,17 @@ package iapractica;
 
 import IA.Bicing.Estacion;
 import IA.Bicing.Estaciones;
+import static aima.basic.Util.max;
 import aima.search.framework.Successor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.SortedSet;
@@ -27,8 +33,10 @@ public class Escenario {
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
     private Estaciones estaciones;
-    private TreeMap<Integer, Integer> estacionesSinDemanda;
-    private TreeMap<Integer, Integer> estacionesConDemanda;
+    //private TreeMap<Integer, Integer> estacionesSinDemanda;
+    //private TreeMap<Integer, Integer> estacionesConDemanda;
+    private Map<Integer, Integer> estacionesSinDemanda;
+    private Map<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
     private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -54,12 +62,9 @@ public class Escenario {
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
-        
-        HashMap tmpConDemanda = new HashMap();
-        HashMap tmpSinDemanda = new HashMap();
-        
-        ValueComparator bvc = new ValueComparator(tmpConDemanda);
-        ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
+
+        estacionesConDemanda = new HashMap<Integer, Integer>();
+        estacionesSinDemanda = new HashMap<Integer, Integer>();
 
         for (int i = 0; i < estaciones.size(); i++) {
 
@@ -70,22 +75,16 @@ public class Escenario {
             int faltan = (demanda - next);
 
             if (faltan > 0) {
-                tmpConDemanda.put(new Integer(i), new Integer(faltan));
+                estacionesConDemanda.put(new Integer(i), new Integer(faltan));
             } else {
 
                 int disponibles = actuales - (demanda - (next - actuales));
 
                 if (disponibles > 0) {
-                    tmpSinDemanda.put(new Integer(i), new Integer(disponibles));
+                    estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
                 }
             }
         }
-        
-        estacionesSinDemanda = new TreeMap(bvc);
-        estacionesConDemanda = new TreeMap(bvc2);
-        
-        estacionesSinDemanda.putAll(tmpSinDemanda);
-        estacionesConDemanda.putAll(tmpConDemanda);
 
     }
 
@@ -106,10 +105,9 @@ public class Escenario {
 
         estaciones = new Estaciones(e, b, dem, seed);
 
-       
         HashMap tmpConDemanda = new HashMap();
         HashMap tmpSinDemanda = new HashMap();
-        
+
         ValueComparator bvc = new ValueComparator(tmpConDemanda);
         ValueComparator bvc2 = new ValueComparator(tmpSinDemanda);
 
@@ -132,15 +130,15 @@ public class Escenario {
                 }
             }
         }
-        
+
         estacionesSinDemanda = new TreeMap(bvc);
         estacionesConDemanda = new TreeMap(bvc2);
-        
+
         estacionesSinDemanda.putAll(tmpSinDemanda);
         estacionesConDemanda.putAll(tmpConDemanda);
 
     }
-    
+
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
         nBicicletas = clone.getnBicicletas();
@@ -156,9 +154,92 @@ public class Escenario {
         estacionesSinDemanda = clone.getE
         
     }
+
+    public void generarEstadoInicialVacio() {
+
+    }
+
+    /*
+    * Crea viajes con origen según el orden de las estaciones de la colección
+    * "estaciones" no ordenado. Añade el primer destino de forma aleatoria y el
+    * segundo lo deja vacío
+    */
     
     public void generarEstadoInicialRandom() {
+
+        int count = 0;
+
+        for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
+
+            Estacion estacionOrigen = estaciones.get(entryCon.getKey());
+
+            int destTmp = new Random().nextInt(estacionesSinDemanda.size());
+            Estacion estacionDest = null;
+            int count2 = 0;
+
+            for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
+
+                if (destTmp == count2) {
+                    estacionDest = estaciones.get(entrySin.getKey());
+                }
+                count2++;
+            }
+
+            Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
+
+            nuevoViaje.setNBDest1(entryCon.getValue());
+
+            viajes.add(nuevoViaje);
+
+            count++;
+            if (nFurgonetas < count) {
+                break;
+            }
+        }
+
+    }
+    
+    /*
+    * Crea viajes con origen en las "nFurgonetas" estaciones con más demanda
+    * y asigna el primer destino a la estación con demanda más cercana.
+    */
+
+    public void generarEstadoInicialLogico() {
+
+        estacionesConDemanda = sortByComparator(estacionesConDemanda, false);
         
+        int count = 0;
+
+        for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
+
+            Estacion estacionOrigen = estaciones.get(entryCon.getKey());
+
+            int minDist = 9999999;
+            Estacion estacionDest = null;
+
+            for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
+
+                Estacion estacionDesttmp = estaciones.get(entrySin.getKey());
+
+                int dist = calcDistancia(estacionOrigen.getCoordX(), estacionDesttmp.getCoordX(), estacionOrigen.getCoordY(), estacionDesttmp.getCoordY());
+
+                if (minDist > dist) {
+                    estacionDest = estaciones.get(entrySin.getKey());
+                }
+            }
+
+            Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
+
+            nuevoViaje.setNBDest1(entryCon.getValue());
+
+            viajes.add(nuevoViaje);
+
+            count++;
+            if (nFurgonetas < count) {
+                break;
+            }
+        }
+
     }
 
     //Falta implementar
@@ -167,23 +248,25 @@ public class Escenario {
         return true;
 
     }
-       public void operadorOrigenesViajes(Viaje v, Estacion e) {
+
+    public void operadorOrigenesViajes(Viaje v, Estacion e) {
         //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
-            v.setOrigenx(e.getCoordX());
-            v.setOrigeny(e.getCoordY());
+        v.setOrigenx(e.getCoordX());
+        v.setOrigeny(e.getCoordY());
         //}
     }
-    
-    public v  oid operadorDestino1(Viaje v, Estacion e) {
-        if(v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
+
+    public void operadorDestino1(Viaje v, Estacion e) {
+        if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
             if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
                 v.setDest1x(e.getCoordX());
                 v.setDest1y(e.getCoordY());
             }
         }
     }
+
     public void operadorDestino2(Viaje v, Estacion e) {
-        if(v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
+        if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
             if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
                 v.setDest2x(e.getCoordX());
                 v.setDest2y(e.getCoordY());
@@ -191,16 +274,16 @@ public class Escenario {
         }
     }
 
-     public int valorHeuristico(int h) {
+    public int valorHeuristico(int h) {
 // Cambiar formula
         int beneficio = 0;
         switch (h) {
             case 0:
-                for (Estacion e: estaciones) {
-                    beneficio += beneficioEstacion(e); 
+                for (Estacion e : estaciones) {
+                    beneficio += beneficioEstacion(e);
                 }
             case 1:
-                for (Viaje v: viajes) {
+                for (Viaje v : viajes) {
                     beneficio += beneficioViaje(v);
                 }
         }
@@ -436,13 +519,45 @@ public class Escenario {
         }
     }
     
-    public TreeMap<Integer,Integer> getEstacionesConDemanda() {
-        return estacionesConDemanda;
-    }
-    
-    public TreeMap<Integer,Integer> getEstacionesSinDemanda() {
-        return estacionesSinDemanda;
+        private static Map<Integer, Integer> sortByComparator(Map<Integer, Integer> unsortMap, final boolean order)
+    {
+
+        List<Map.Entry<Integer, Integer>> list = new LinkedList<Map.Entry<Integer, Integer>>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>()
+        {
+            public int compare(Map.Entry<Integer, Integer> o1,
+                    Map.Entry<Integer, Integer> o2)
+            {
+                if (order)
+                {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+                else
+                {
+                    return o2.getValue().compareTo(o1.getValue());
+
+                }
+            }
+        });
+
+        // Maintaining insertion order with the help of LinkedList
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
+        for (Map.Entry<Integer, Integer> entry : list)
+        {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 
+    public TreeMap<Integer, Integer> getEstacionesConDemanda() {
+        return estacionesConDemanda;
+    }
+
+    public TreeMap<Integer, Integer> getEstacionesSinDemanda() {
+        return estacionesSinDemanda;
+    }
 
 }
