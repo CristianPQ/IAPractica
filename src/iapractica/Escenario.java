@@ -173,10 +173,18 @@ public class Escenario {
     */
     
     public void generarEstadoInicialRandom() {
-
         int count = 0;
-
-        for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
+        while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
+            int rando = new Random().nextInt(estacionesSinDemanda.size());
+            int randd1 = new Random().nextInt(estacionesConDemanda.size());
+            int randd2 = new Random().nextInt(estacionesConDemanda.size());
+            Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
+            asignarOrigen(v, rando);
+            asignarDestino1(v, randd1);
+            asignarDestino2(v,randd2);
+            ++count;
+        }
+        /*for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
 
             Estacion estacionOrigen = estaciones.get(entryCon.getKey());
 
@@ -203,7 +211,7 @@ public class Escenario {
                 break;
             }
         }
-
+*/
     }
     
     /*
