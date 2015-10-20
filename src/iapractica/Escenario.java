@@ -712,12 +712,49 @@ public class Escenario {
             v.setDest1x(e.getCoordX());
             v.setDest1y(e.getCoordY());
             
+            
             int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
             int posibles = estacionesSinDemanda.get(posOrig);
             
+            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+            
             //si no tiene dest 2
             if(v.getDest2x() < 0) {
-                
+                //hay mas bicis disponibles que la demanda
+                if(posibles >= eDemanda) {
+                    estacionesConDemanda.put(posE, 0);
+                    v.setNBDest1(eDemanda);
+                }
+                else {
+                    //menos bicis disponibles que la demanda
+                    estacionesConDemanda.put(posE, eDemanda-posibles);
+                    v.setNBDest1(posibles);
+                }
+            }
+            else {
+                int disp = posibles - v.getNBDest2();
+                if(disp >= eDemanda) {
+                    estacionesConDemanda.put(posE, 0);
+                    v.setNBDest1(eDemanda);
+                    disp -= eDemanda;
+                } else {
+                    //si hay un dest2 se mantiene que se dejan el maximo en dest1 antes que en dest2
+                    int necesario = eDemanda - disp;
+                    if(v.getNBDest2() > necesario) {
+                        v.setNBDest2(v.getNBDest2() - necesario);
+                        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2)+necesario);
+                        v.setNBDest2(v.getNBDest2()-necesario);
+                        
+                        estacionesConDemanda.put(posE, 0);
+                        v.setNBDest1(eDemanda);
+                    }
+                    else {
+                        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2)+v.getNBDest2());
+                        v.setNBDest2(0);
+                        v.setDest2x(-1);
+                        v.setDest2y(-1);
+                    }
+                }
             }
             
         }
