@@ -702,11 +702,18 @@ public class Escenario {
             Estacion e = estaciones.get(posE);
             int eDemanda = -bicisDisponibles(e);
             if(eDemanda < 1) return;
+            
             Estacion eAnt = estaciones.get(posAnt);
+            
             estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
+            
             estacionesDisponibilidad.add(posE, Boolean.FALSE);
             v.setDest1x(e.getCoordX());
             v.setDest1y(e.getCoordY());
+            
+            int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
+            int posibles = estacionesSinDemanda.get(posOrig);
             
             //si no tiene dest 2
             if(v.getDest2x() < 0) {
@@ -719,7 +726,7 @@ public class Escenario {
         }
     }
     
-    public void asignarDestino2(Viaje v, Estacion e) {
+    public void asignarDestino2(Viaje v, int posE) {
         
     }
     
