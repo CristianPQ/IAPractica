@@ -737,6 +737,19 @@ public class Escenario {
                     estacionesConDemanda.put(posE, 0);
                     v.setNBDest1(eDemanda);
                     disp -= eDemanda;
+                    int demDest2 = estacionesConDemanda.get(posDest2);
+                    if(demDest2 > 0) {
+                        if(disp >= demDest2) {
+                            v.setNBDest2(v.getNBDest2() + demDest2);
+                            estacionesConDemanda.put(posDest2, 0);
+                            disp -= demDest2;
+                        }
+                        else {
+                            v.setNBDest2(v.getNBDest2() + disp);
+                            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2)-disp);
+                        }
+                    }
+                        
                 } else {
                     //si hay un dest2 se mantiene que se dejan el maximo en dest1 antes que en dest2
                     int necesario = eDemanda - disp;
@@ -750,6 +763,8 @@ public class Escenario {
                     }
                     else {
                         estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2)+v.getNBDest2());
+                        estacionesConDemanda.put(posE, estacionesConDemanda.get(posE)-v.getNBDest2());
+                        v.setNBDest1(v.getNBDest2());
                         v.setNBDest2(0);
                         v.setDest2x(-1);
                         v.setDest2y(-1);
