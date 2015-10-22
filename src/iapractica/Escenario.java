@@ -595,6 +595,7 @@ public class Escenario {
     }
     
     
+    //para pasarle un elemento vacio es suficiente con pasarle -1
     //posE es la posicion en estaciones de la estacion que se le va a asignar
     //v es el viaje donde se van a realizar als modificaciones
     public void asignarOrigen(Viaje v,  int posE) {
@@ -696,6 +697,7 @@ public class Escenario {
         return e.getNumBicicletasNoUsadas()- (e.getDemanda() - (e.getNumBicicletasNext() - e.getNumBicicletasNoUsadas()));
     }
     
+    //para pasarle un elemento vacio es suficiente con pasarle -1
     public void asignarDestino1(Viaje v, int posE) {
         int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
         if(posE >= 0) {
@@ -774,12 +776,22 @@ public class Escenario {
             
         }
         else {
-            
+            estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
+            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
+            v.setDest1x(-1);
+            v.setDest1y(-1);
+            v.setNBDest1(0);
+            v.setDest2x(-1);
+            v.setDest2y(-1);
+            v.setNBDest2(0);
         }
     }
     
     public void asignarDestino2(Viaje v, int posE) {
-        
+        if(posE >= 0) {
+            
+        }
     }
     
     public int getEstacion(int X, int Y) {
