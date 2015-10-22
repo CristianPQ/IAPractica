@@ -164,7 +164,12 @@ public class Escenario {
     }
 
     public void generarEstadoInicialVacio() {
-
+        int count = 0;
+        while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
+            Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
+            viajes.add(v);
+            ++count;
+        }
     }
 
     /*
@@ -182,6 +187,7 @@ public class Escenario {
             Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
             asignarOrigen(v, rando);
             asignarDestino1(v, randd1);
+            viajes.add(v);
             //asignarDestino2(v,randd2);
             ++count;
         }
@@ -322,6 +328,19 @@ public class Escenario {
         }
         return beneficio;
     }
+    
+    public boolean op0(int v, int e) {
+        return asignarOrigen(viajes.get(v), e);
+    }
+    
+    public boolean op1(int v, int e) {
+        return asignarDestino1(viajes.get(v), e);
+    }
+    
+    public boolean op2(int v, int e) {
+        return asignarDestino2(viajes.get(v), e);
+    }
+    
 
     /**
      * Devuelve todos los sucesores usando solo el operador de intercambiar (de
@@ -333,25 +352,37 @@ public class Escenario {
     public ArrayList getTodosSucesores() {
         ArrayList ret = new ArrayList();
         for (int i = 0; i < viajes.size(); i++) {
-            for (int j = i + 1; j < viajes.size(); j++) {
-                Escenario e = new Escenario(this);
-                e.swapFurgonetas(i, j);
-                int idFurgonetaI = viajes.get(i).getIdFurgoneta();
-                int idFurgonetaJ = viajes.get(j).getIdFurgoneta();
-                Boolean valido = true;
-                if (idFurgonetaI != -1) {
-                    valido &= furgonetas.get(idFurgonetaI).getKilometrosRecorridos() <= NKILOMETROSDIAS;
-                }
-                if (idFurgonetaJ != -1) {
-                    valido &= furgonetas.get(idFurgonetaJ).getKilometrosRecorridos() <= NKILOMETROSDIAS;
-                }
-                if (valido) {
-                    ret.add(new Successor("Intercambiadas " + i + " y " + j + " H:" + e.heuristicValue(1), e));
+            for(Map.Entry<Integer,Integer> est : estacionesSinDemanda.entrySet()) {
+                Escenario b = new Escenario(this); 
+                if(b.op0(i, est.getKey())) {
+                    ret.add(new Successor("Asignar Origen " + estaciones.get(est.getKey()) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
                 }
             }
+            Escenario aux1 = new Escenario(this);
+            aux1.op0(i, -1);
+            ret.add(new Successor("Asignar Origen " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux1.valorHeuristico(1), aux1));
+            for(Map.Entry<Integer,Integer> est : estacionesConDemanda.entrySet()) {
+                Escenario b = new Escenario(this); 
+                if(b.op1(i, est.getKey())) {
+                    ret.add(new Successor("Asignar Destino1 " + estaciones.get(est.getKey()) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+                }
+            }
+            Escenario aux2 = new Escenario(this);
+            aux2.op2(i, -1);
+            ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux2.valorHeuristico(1), aux2));
+            
+            for(Map.Entry<Integer,Integer> est : estacionesConDemanda.entrySet()) {
+                Escenario b = new Escenario(this); 
+                if(b.op2(i, est.getKey())) {
+                    ret.add(new Successor("Asignar Destino2 " + estaciones.get(est.getKey()) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+                }
+            }
+            Escenario aux3 = new Escenario(this);
+            aux3.op2(i, -1);
+            ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux3.valorHeuristico(1), aux3));
         }
 
-        for (int i = 0; i < viajes.size(); i++) {
+       /* for (int i = 0; i < viajes.size(); i++) {
             if (viajes.get(i).getIdFurgoneta() == -1) {
                 for (int k = 0; k < furgonetas.size(); k++) {
                     Escenario b = new Escenario(this);
@@ -363,7 +394,7 @@ public class Escenario {
 
             }
 
-        }
+        }*/
 
         return ret;
     }
@@ -599,8 +630,8 @@ public class Escenario {
     //para pasarle un elemento vacio es suficiente con pasarle -1
     //posE es la posicion en estaciones de la estacion que se le va a asignar
     //v es el viaje donde se van a realizar als modificaciones
-    public void asignarOrigen(Viaje v,  int posE) {
-        if(!estacionesDisponibilidad.get(posE)) return;
+    public boolean asignarOrigen(Viaje v,  int posE) {
+        if(!estacionesDisponibilidad.get(posE)) return false;
         
         int posAnt = getEstacion(v.getOrigenx(), v.getOrigeny());
         
@@ -609,7 +640,7 @@ public class Escenario {
             Estacion eAnt = estaciones.get(posAnt);
 
             int disponibles = estacionesSinDemanda.get(posE);
-            if(disponibles < 1) return;
+            if(disponibles < 1) return false;
 
             int antNecesarias = v.getNBDest1() + v.getNBDest2();
             
@@ -692,6 +723,7 @@ public class Escenario {
             v.setDest2y(-1);
             v.setNBDest2(0);
         }
+        return true;
     }
     
     public int bicisDisponibles(Estacion e) {
@@ -699,12 +731,12 @@ public class Escenario {
     }
     
     //para pasarle un elemento vacio es suficiente con pasarle -1
-    public void asignarDestino1(Viaje v, int posE) {
+    public boolean asignarDestino1(Viaje v, int posE) {
         int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
         if(posE >= 0) {
             Estacion e = estaciones.get(posE);
-            int eDemanda = -bicisDisponibles(e);
-            if(eDemanda < 1) return;
+            int eDemanda = estacionesConDemanda.get(posE);
+            if(eDemanda < 1) return false;
             
             Estacion eAnt = estaciones.get(posAnt);
             
@@ -787,13 +819,15 @@ public class Escenario {
             v.setDest2y(-1);
             v.setNBDest2(0);
         }
+        return true;
     }
     
-    public void asignarDestino2(Viaje v, int posE) {
+    public boolean asignarDestino2(Viaje v, int posE) {
         //reasignado anterior dest2
         int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
         estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
         if(posE >= 0) {
+            if(1 > estacionesConDemanda.get(posE)) return false;
             int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
             int disponibles = estacionesSinDemanda.get(posOrig)-v.getNBDest1();
             int aAsignar;
@@ -807,6 +841,7 @@ public class Escenario {
             v.setDest2y(-1);
             v.setNBDest2(0);
         }
+        return true;
     }
     
     public int getEstacion(int X, int Y) {
