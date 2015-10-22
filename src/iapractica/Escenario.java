@@ -1,5 +1,4 @@
 
-
 package iapractica;
 //PRUEBA GITHUB
 /*
@@ -192,27 +191,19 @@ public class Escenario {
             ++count;
         }
         /*for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
-
             Estacion estacionOrigen = estaciones.get(entryCon.getKey());
-
             int destTmp = new Random().nextInt(estacionesSinDemanda.size());
             Estacion estacionDest = null;
             int count2 = 0;
-
             for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
-
                 if (destTmp == count2) {
                     estacionDest = estaciones.get(entrySin.getKey());
                 }
                 count2++;
             }
-
             Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
-
             nuevoViaje.setNBDest1(entryCon.getValue());
-
             viajes.add(nuevoViaje);
-
             count++;
             if (nFurgonetas < count) {
                 break;
@@ -266,9 +257,7 @@ public class Escenario {
 
     //Falta implementar
     /*public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
-
         return true;
-
     }*/
 
     /*public void operadorOrigenesViajes(Viaje v, Estacion e) {
@@ -389,11 +378,8 @@ public class Escenario {
                     if (b.addPeticionACamionFirstPlace(b.furgonetas.get(k).getId(), b.viajes.get(i).getIdViaje(), NKILOMETROSDIAS)) {
                         ret.add(new Successor("Añadida peticion " + i + " a camion" + b.furgonetas.get(k).getId() + "H:" + b.heuristicValue(1), b));
                     }
-
                 }
-
             }
-
         }*/
 
         return ret;
@@ -401,22 +387,46 @@ public class Escenario {
 
     public ArrayList getSucesorAleatorio() {
         ArrayList<Successor> ret = new ArrayList();
-
         int i = r.nextInt(viajes.size());
-        int j = 0;
+        int j = r.nextInt(estacionesSinDemanda.size());
         // Por si acaso solo hubiese una petición
-        if (viajes.size() > 1) {
-            do {
-                j = r.nextInt(viajes.size());
-            } while (i == j);
-        }
-
         Escenario b = new Escenario(this);
-        b.swapFurrgonetas(i, j);
-        ret.add(new Successor("Intercambiadas " + i + " y " + j, b));
-
-        Escenario addBoard = new Escenario(this);
-        if (viajes.size() > 1) {
+        boolean asignar = b.op0(i, j);
+        while(!asignar){ //iterar hasta encontrar un origen
+            j = r.nextInt(estacionesSinDemanda.size());
+            asignar = b.op0(i, j);
+        }
+        //ret.add(new Successor("Intercambiadas " + i + " y " + j, b));
+        if(asignar) ret.add(new Successor("Asignar Origen " + estacionesSinDemanda.get(j) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));        
+        Escenario aux = new Escenario(this);
+        aux.op0(i, -1);
+        ret.add(new Successor("Asignar Origen " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux1.valorHeuristico(1), aux1));
+        Escenario d = new Escenario(this);
+        j = r.nextInt(estacionesConDemanda.size());
+        asignar = d.op1(i, j);
+        while (!asignar) {
+            j = r.nextInt(estacionesConDemanda.size());
+            asignar = d.op1(i, j);
+        }
+        if(asignar) ret.add(new Successor("Asignar Destino1 " + estaciones.get(est.getKey()) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+        Escenario auxd = new Escenario(this);
+        auxd.op1(i, -1);
+        ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux2.valorHeuristico(1), aux2));
+            
+        Escenario d2 = new Escenario(this);
+        j = r.nextInt(estacionesConDemanda.size());
+        asignar = d2.op2(i, j);
+        while(!asignar) {
+            j = r.nextInt(estacionesConDemanda.size());
+            asignar = d2.op2(i, j);
+        }
+        if(asignar) ret.add(new Successor("Asignar Destino2 " + estaciones.get(j) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+        
+        Escenario auxd2 = new Escenario(this);
+        auxd2.op2(i, -1);
+        ret.add(new Successor("Asignar Destino2 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux3.valorHeuristico(1), aux3));
+        return ret;
+        /*if (viajes.size() > 1) {
             int peticion = 0;
             boolean peticionValida = false;
             for (int k = 0; k < 1000; k++) {
@@ -446,20 +456,20 @@ public class Escenario {
             ret.remove(r.nextInt(2));
         }
 
-        return ret;
+        return ret;*/
     }
 
     public boolean isGoalState() {
         return (false);
     }
 
-    public int getKilometros() {
+    /*public int getKilometros() {
         int kilometros = 0;
         for (Furgoneta f : furgonetas) {
             kilometros += f.getKilometrosRecorridos();
         }
         return kilometros;
-    }
+    }*/
 
     public static int getNUMEROMAXIMOVIAJES() {
         return NUMEROMAXIMOVIAJES;
@@ -494,7 +504,6 @@ public class Escenario {
         }
         return peticionesServidas;
     }
-
     public int getPeticionesNoServidas() {
         int peticionesServidas = 0;
         for (Viaje peticion : viajes) {
@@ -504,7 +513,6 @@ public class Escenario {
         }
         return peticionesServidas;
     }
-
     public double calcularBeneficio() {
         double beneficio = 0;
         for (Viaje v : viajes) {
