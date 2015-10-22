@@ -385,46 +385,73 @@ public class Escenario {
         return ret;
     }
 
-    public ArrayList getSucesorAleatorio() {
+   public ArrayList getSucesorAleatorio() {
         ArrayList<Successor> ret = new ArrayList();
         int i = r.nextInt(viajes.size());
         int j = r.nextInt(estacionesSinDemanda.size());
         // Por si acaso solo hubiese una petición
         Escenario b = new Escenario(this);
-        boolean asignar = b.op0(i, j);
-        while(!asignar){ //iterar hasta encontrar un origen
-            j = r.nextInt(estacionesSinDemanda.size());
-            asignar = b.op0(i, j);
+        
+        boolean asignar = false;
+        int cont = 0;
+        int posE = -1;
+        while(!asignar){ 
+            for(Map.Entry<Integer,Integer> e : estacionesSinDemanda.entrySet()) {
+                if (cont == j) {
+                    Estacion es = estaciones.get(e.getKey());
+                    posE = getEstacion(es.getCoordX(),es.getCoordY());
+                    asignar = b.op0(i,posE);
+                    break;
+                }
+                ++cont;
+            }
         }
         //ret.add(new Successor("Intercambiadas " + i + " y " + j, b));
-        if(asignar) ret.add(new Successor("Asignar Origen " + estacionesSinDemanda.get(j) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));        
+        if(asignar) ret.add(new Successor("Asignar Origen " + estaciones.get(posE) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));        
         Escenario aux = new Escenario(this);
         aux.op0(i, -1);
-        ret.add(new Successor("Asignar Origen " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux1.valorHeuristico(1), aux1));
+        ret.add(new Successor("Asignar Origen " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux.valorHeuristico(1), aux));
         Escenario d = new Escenario(this);
         j = r.nextInt(estacionesConDemanda.size());
-        asignar = d.op1(i, j);
-        while (!asignar) {
-            j = r.nextInt(estacionesConDemanda.size());
-            asignar = d.op1(i, j);
+        asignar = false;
+        cont = 0;
+        posE = -1;
+        while(!asignar){ 
+            for(Map.Entry<Integer,Integer> e : estacionesConDemanda.entrySet()) {
+                if (cont == j) {
+                    Estacion es = estaciones.get(e.getKey());
+                    posE = getEstacion(es.getCoordX(),es.getCoordY());
+                    asignar = b.op1(i,posE);
+                    break;
+                }
+                ++cont;
+            }
         }
-        if(asignar) ret.add(new Successor("Asignar Destino1 " + estaciones.get(est.getKey()) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+        if(asignar) ret.add(new Successor("Asignar Destino1 " + estaciones.get(posE) + " a viaje" + viajes.get(i) + "H:" + d.valorHeuristico(1), d));
         Escenario auxd = new Escenario(this);
         auxd.op1(i, -1);
-        ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux2.valorHeuristico(1), aux2));
+        ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + auxd.valorHeuristico(1), auxd));
             
         Escenario d2 = new Escenario(this);
-        j = r.nextInt(estacionesConDemanda.size());
-        asignar = d2.op2(i, j);
-        while(!asignar) {
-            j = r.nextInt(estacionesConDemanda.size());
-            asignar = d2.op2(i, j);
+        asignar = false;
+        cont = 0;
+        posE = -1;
+        while(!asignar){ 
+            for(Map.Entry<Integer,Integer> e : estacionesConDemanda.entrySet()) {
+                if (cont == j) {
+                    Estacion es = estaciones.get(e.getKey());
+                    posE = getEstacion(es.getCoordX(),es.getCoordY());
+                    asignar = b.op2(i,posE);
+                    break;
+                }
+                ++cont;
+            }
         }
-        if(asignar) ret.add(new Successor("Asignar Destino2 " + estaciones.get(j) + " a viaje" + viajes.get(i) + "H:" + b.valorHeuristico(1), b));
+        if(asignar) ret.add(new Successor("Asignar Destino2 " + estaciones.get(posE) + " a viaje" + viajes.get(i) + "H:" + d2.valorHeuristico(1), d2));
         
         Escenario auxd2 = new Escenario(this);
         auxd2.op2(i, -1);
-        ret.add(new Successor("Asignar Destino2 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux3.valorHeuristico(1), aux3));
+        ret.add(new Successor("Asignar Destino2 " + (-1) + " a viaje" + viajes.get(i) + "H:" + auxd2.valorHeuristico(1), auxd2));
         return ret;
         /*if (viajes.size() > 1) {
             int peticion = 0;
