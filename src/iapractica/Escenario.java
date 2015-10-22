@@ -10,22 +10,17 @@ package iapractica;
 
 import IA.Bicing.Estacion;
 import IA.Bicing.Estaciones;
-import static aima.basic.Util.max;
 import aima.search.framework.Successor;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.ArrayList;;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class Escenario {
 
@@ -34,14 +29,14 @@ public class Escenario {
     private static int nEstaciones;
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
-    private Estaciones estaciones;
+    private static Estaciones estaciones;
     //private TreeMap<Integer, Integer> estacionesSinDemanda;
     //private TreeMap<Integer, Integer> estacionesConDemanda;
     private Map<Integer, Integer> estacionesSinDemanda;
     private ArrayList<Boolean> estacionesDisponibilidad;
     private Map<Integer, Integer> estacionesConDemanda;
     //id furgos = pos en Array+1
-    private ArrayList<Furgoneta> furgonetas;
+    //private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
     private Random r = new Random();
 
@@ -61,7 +56,7 @@ public class Escenario {
         nEstaciones = e;
         nBicicletas = b;
         nFurgonetas = f;
-        furgonetas = new ArrayList();
+        //furgonetas = new ArrayList();
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
@@ -107,10 +102,14 @@ public class Escenario {
         nEstaciones = e;
         nBicicletas = b;
         nFurgonetas = f;
-        furgonetas = new ArrayList();
+        //furgonetas = new ArrayList();
         viajes = new ArrayList();
 
         estaciones = new Estaciones(e, b, dem, seed);
+        estacionesDisponibilidad = new ArrayList(e);
+        for(int m = 0; m < estacionesDisponibilidad.size(); ++m) {
+            estacionesDisponibilidad.add(m, Boolean.TRUE);
+        }
 
         HashMap tmpConDemanda = new HashMap();
         HashMap tmpSinDemanda = new HashMap();
@@ -145,20 +144,24 @@ public class Escenario {
         estacionesConDemanda.putAll(tmpConDemanda);
 
     }
-
+    
+    public ArrayList<Boolean> getEstacionesDisponibilidad() {
+        return estacionesDisponibilidad;
+    }
+    
     public Escenario(Escenario clone) {
         nEstaciones = clone.getnEstaciones();
         nBicicletas = clone.getnBicicletas();
         nFurgonetas = clone.getnFurgonetas();
         estaciones = clone.getEstaciones();
-        for (Estacion e : clone.getEstaciones()) {
-            Estacion j = new Estacion(e.getCoordX(), e.getCoordY());
-            j.setNumBicicletasNoUsadas(e.getNumBicicletasNoUsadas());
-            j.setNumBicicletasNext(e.getNumBicicletasNext());
-            j.setDemanda(e.getDemanda());
-            estaciones.add(j);
-        }
-        //estacionesSinDemanda = clone.getE
+        
+        estacionesSinDemanda = new HashMap<Integer,Integer>(clone.getEstacionesSinDemanda());
+        
+        estacionesDisponibilidad = new ArrayList(clone.getEstacionesDisponibilidad());
+        
+        estacionesConDemanda = new HashMap<Integer,Integer>(clone.getEstacionesConDemanda());
+        
+        viajes = new ArrayList<Viaje>(clone.getViajes());
         
     }
 
