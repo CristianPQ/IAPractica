@@ -264,7 +264,7 @@ public class Escenario {
 
     }
 
-    public void operadorOrigenesViajes(Viaje v, Estacion e) {
+    /*public void operadorOrigenesViajes(Viaje v, Estacion e) {
         //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
         if (e != null) {
             v.setOrigenx(e.getCoordX());
@@ -274,9 +274,9 @@ public class Escenario {
             v.setOrigenx(-1);
             v.setOrigeny(-1);
         }
-    }
+    }*/
 
-    public void operadorDestino1(Viaje v, Estacion e) {
+    /*public void operadorDestino1(Viaje v, Estacion e) {
         if (e != null) {
             if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
                 if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
@@ -289,9 +289,9 @@ public class Escenario {
             v.setDest1x(-1);
             v.setDest1y(-1);
         }
-    }
+    }*/
 
-    public void operadorDestino2(Viaje v, Estacion e) {
+    /*public void operadorDestino2(Viaje v, Estacion e) {
         if (e != null) {
             if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
                 if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
@@ -304,7 +304,7 @@ public class Escenario {
             v.setDest2x(-1);
             v.setDest2y(-1);
         }
-    }
+    }*/
 
     public int valorHeuristico(int h) {
 // Cambiar formula
@@ -789,8 +789,22 @@ public class Escenario {
     }
     
     public void asignarDestino2(Viaje v, int posE) {
+        //reasignado anterior dest2
+        int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
         if(posE >= 0) {
-            
+            int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
+            int disponibles = estacionesSinDemanda.get(posOrig)-v.getNBDest1();
+            int aAsignar;
+            if (disponibles >= estacionesConDemanda.get(posE)) aAsignar = estacionesConDemanda.get(posE);
+            else aAsignar = disponibles;
+            estacionesConDemanda.put(posE, aAsignar);
+            v.setNBDest2(aAsignar);
+        }
+        else {
+            v.setDest2x(-1);
+            v.setDest2y(-1);
+            v.setNBDest2(0);
         }
     }
     
