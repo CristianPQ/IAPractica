@@ -30,11 +30,9 @@ public class Escenario {
     private static int nBicicletas; // > nEstaciones*50
     private static int nFurgonetas;
     private static Estaciones estaciones;
-    //private TreeMap<Integer, Integer> estacionesSinDemanda;
-    //private TreeMap<Integer, Integer> estacionesConDemanda;
-    private Map<Integer, Integer> estacionesSinDemanda;
+    private Map<Integer, Integer> estacionesSinDemanda; //estaciones origen
     private ArrayList<Boolean> estacionesDisponibilidad;
-    private Map<Integer, Integer> estacionesConDemanda;
+    private Map<Integer, Integer> estacionesConDemanda; //estaciones destino
     //id furgos = pos en Array+1
     //private ArrayList<Furgoneta> furgonetas;
     private ArrayList<Viaje> viajes;
@@ -180,11 +178,11 @@ public class Escenario {
         while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
             int rando = new Random().nextInt(estacionesSinDemanda.size());
             int randd1 = new Random().nextInt(estacionesConDemanda.size());
-            int randd2 = new Random().nextInt(estacionesConDemanda.size());
+            //int randd2 = new Random().nextInt(estacionesConDemanda.size());
             Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
             asignarOrigen(v, rando);
             asignarDestino1(v, randd1);
-            asignarDestino2(v,randd2);
+            //asignarDestino2(v,randd2);
             ++count;
         }
         /*for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
@@ -261,11 +259,11 @@ public class Escenario {
     }
 
     //Falta implementar
-    public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
+    /*public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
 
         return true;
 
-    }
+    }*/
 
     /*public void operadorOrigenesViajes(Viaje v, Estacion e) {
         //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
