@@ -12,6 +12,7 @@ import aima.search.informed.HillClimbingSearch;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  *
@@ -203,20 +204,32 @@ public class Test extends javax.swing.JFrame {
             } else {
                 escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()));
             }*/
+            int heuris = 0;
             
-            escenario = new Escenario(10,50,1,100);
+            if(jcmbBeneficio.getSelectedIndex() == 1){
+                heuris = 1;
+            }
             
-           /* if (estadoI.getSelectedIndex() == 0) {
-                estadoIni = "Estado Inicial: 1";
-                DG.generarEstadoInicial1();
-            } else if (estadoI.getSelectedIndex() == 1) {
-                estadoIni = "Estado Inicial: 2";
-                DG.generarEstadoInicial2();
-            } else {
+            int seed;
+            if(jtxtSemilla.getText().equals("")){
+                Random r = new Random();
+                seed = r.nextInt(100);
+            }else{
+                seed = Integer.valueOf(jtxtSemilla.getText());
+            }
+            
+            escenario = new Escenario(Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
+            
+           if (jcmbEstado.getSelectedIndex() == 0) {
                 estadoIni = "Estado Inicial: Vacio";
-                DG.generarEstadoInicialVacio();
-            }*/
-            escenario.generarEstadoInicialLogico();
+                escenario.generarEstadoInicialVacio();
+            } else if (jcmbEstado.getSelectedIndex() == 1) {
+                estadoIni = "Estado Inicial: Random";
+                escenario.generarEstadoInicialRandom();
+            } else {
+                estadoIni = "Estado Inicial: Lógico";
+                escenario.generarEstadoInicialLogico();
+            }
             System.out.println(escenario.Beneficios());
             try {
                 Problem problem;
