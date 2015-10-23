@@ -92,6 +92,11 @@ public class Test extends javax.swing.JFrame {
         });
 
         jbtnSimulatetA.setText("Ejecutar: Simulatet Annealing");
+        jbtnSimulatetA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnSimulatetAActionPerformed(evt);
+            }
+        });
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -276,6 +281,87 @@ public class Test extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jbtnHillCActionPerformed
+
+    private void jbtnSimulatetAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSimulatetAActionPerformed
+      
+        Escenario escenario;
+        double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
+        String estadoIni = "", heuristico = "";
+        for (int i = 0; i < 10000; i++) {
+            /*if (!semilla.getText().equals("")) {
+                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()), Integer.valueOf(semilla.getText()));
+            } else {
+                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()));
+            }*/
+            int heuris = 0;
+            
+            if(jcmbBeneficio.getSelectedIndex() == 1){
+                heuris = 1;
+            }
+            
+            int seed;
+            if(jtxtSemilla.getText().equals("")){
+                Random r = new Random();
+                seed = r.nextInt(100);
+            }else{
+                seed = Integer.valueOf(jtxtSemilla.getText());
+            }
+            
+            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
+            
+           if (jcmbEstado.getSelectedIndex() == 0) {
+                estadoIni = "Estado Inicial: Vacio";
+                escenario.generarEstadoInicialVacio();
+            } else if (jcmbEstado.getSelectedIndex() == 1) {
+                estadoIni = "Estado Inicial: Random";
+                escenario.generarEstadoInicialRandom();
+            } else {
+                estadoIni = "Estado Inicial: Lógico";
+                escenario.generarEstadoInicialLogico();
+            }
+            System.out.println(escenario.Beneficios());
+            try {
+                Problem problem;
+                /*if (Heuristico.getSelectedIndex() == 0) {
+                    heuristico = "Heuristico: 1";
+                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction());
+                } else {
+                    heuristico = "Heuristico: 2";
+                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction1());
+                }*/
+                
+                problem = new Problem(escenario, new BSuccessorFunction2(), new BGoalTest(), new BHeuristicFunction2());
+                
+                Search search = new HillClimbingSearch();
+                Date d1, d2;
+                long temps;
+                Calendar a, b;
+                d1 = new Date();
+                SearchAgent agent = new SearchAgent(problem, search);
+                d2 = new Date();
+                a = Calendar.getInstance();
+                b = Calendar.getInstance();
+                a.setTime(d1);
+                b.setTime(d2);
+                temps = b.getTimeInMillis() - a.getTimeInMillis();
+                mediatiempo += temps;
+                Iterator keys = agent.getInstrumentation().keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    String property = agent.getInstrumentation().getProperty(key);
+                    medianodos += Double.valueOf(property);
+                }
+                Escenario board2 = (Escenario) search.getGoalState();
+                
+                mediabeneficio = board2.Beneficios();
+                //mediaKilometros += board2.getKilometros();
+                System.out.println("Beneficio: " + mediabeneficio);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jbtnSimulatetAActionPerformed
 
     /**
      * @param args the command line arguments
