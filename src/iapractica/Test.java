@@ -56,7 +56,7 @@ public class Test extends javax.swing.JFrame {
         jbtnHillC = new javax.swing.JButton();
         jbtnSimulatetA = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jtxtResultado = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -98,9 +98,9 @@ public class Test extends javax.swing.JFrame {
             }
         });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        jtxtResultado.setColumns(20);
+        jtxtResultado.setRows(5);
+        jScrollPane1.setViewportView(jtxtResultado);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -203,7 +203,7 @@ public class Test extends javax.swing.JFrame {
         Escenario escenario;
         double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
         String estadoIni = "", heuristico = "";
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
             /*if (!semilla.getText().equals("")) {
                 escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()), Integer.valueOf(semilla.getText()));
             } else {
@@ -271,7 +271,7 @@ public class Test extends javax.swing.JFrame {
                 
                 mediabeneficio = board2.Beneficios();
                 //mediaKilometros += board2.getKilometros();
-                System.out.println("Beneficio: " + mediabeneficio);
+                jtxtResultado.append("Beneficio: " + mediabeneficio);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -287,7 +287,8 @@ public class Test extends javax.swing.JFrame {
         Escenario escenario;
         double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
         String estadoIni = "", heuristico = "";
-        for (int i = 0; i < 10000; i++) {
+
+        for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
             /*if (!semilla.getText().equals("")) {
                 escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()), Integer.valueOf(semilla.getText()));
             } else {
@@ -355,7 +356,7 @@ public class Test extends javax.swing.JFrame {
                 
                 mediabeneficio = board2.Beneficios();
                 //mediaKilometros += board2.getKilometros();
-                System.out.println("Beneficio: " + mediabeneficio);
+                jtxtResultado.append("Beneficio: " + mediabeneficio);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -409,7 +410,6 @@ public class Test extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton jbtnHillC;
     private javax.swing.JButton jbtnSimulatetA;
     private javax.swing.JComboBox jcmbBeneficio;
@@ -419,6 +419,7 @@ public class Test extends javax.swing.JFrame {
     private javax.swing.JTextField jtxtEstaciones;
     private javax.swing.JTextField jtxtFurgonetas;
     private javax.swing.JTextField jtxtIteraciones;
+    private javax.swing.JTextArea jtxtResultado;
     private javax.swing.JTextField jtxtSemilla;
     // End of variables declaration//GEN-END:variables
 }
