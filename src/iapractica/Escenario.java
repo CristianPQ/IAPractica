@@ -58,7 +58,7 @@ public class Escenario {
         nFurgonetas = f;
 
         viajes = new ArrayList();
-
+        System.out.println(seed);
         estaciones = new Estaciones(e, b, dem, seed);
         estacionesDisponibilidad = new ArrayList(e);
         for (int m = 0; m < estacionesDisponibilidad.size(); ++m) {
