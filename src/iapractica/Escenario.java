@@ -58,7 +58,7 @@ public class Escenario {
         nFurgonetas = f;
 
         viajes = new ArrayList();
-        System.out.println(seed);
+        //System.out.println(seed);
         estaciones = new Estaciones(e, b, dem, seed);
         estacionesDisponibilidad = new ArrayList(e);
         for (int m = 0; m < estacionesDisponibilidad.size(); ++m) {
@@ -101,8 +101,9 @@ public class Escenario {
         estaciones = clone.getEstaciones();
 
         estacionesSinDemanda = new HashMap<Integer, Integer>(clone.getEstacionesSinDemanda());
-
+        
         estacionesDisponibilidad = new ArrayList(clone.getEstacionesDisponibilidad());
+        System.out.println("tamaño estacioensDiponibilidad: " + estacionesDisponibilidad.size());
 
         estacionesConDemanda = new HashMap<Integer, Integer>(clone.getEstacionesConDemanda());
 
@@ -290,6 +291,7 @@ public class Escenario {
     public ArrayList getTodosSucesores() {
         ArrayList ret = new ArrayList();
         for (int i = 0; i < viajes.size(); i++) {
+            System.out.println("getTodosSucesores estacionesSinDemanda: " + estacionesSinDemanda.size());
             for (Map.Entry<Integer, Integer> est : estacionesSinDemanda.entrySet()) {
                 Escenario b = new Escenario(this);
                 if (b.op0(i, est.getKey())) {
@@ -299,6 +301,7 @@ public class Escenario {
             Escenario aux1 = new Escenario(this);
             aux1.op0(i, -1);
             ret.add(new Successor("Asignar Origen " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux1.valorHeuristico(1), aux1));
+            System.out.println("getTodosSucesores estacionesConDemanda: " + estacionesConDemanda.size());
             for (Map.Entry<Integer, Integer> est : estacionesConDemanda.entrySet()) {
                 Escenario b = new Escenario(this);
                 if (b.op1(i, est.getKey())) {
@@ -308,7 +311,8 @@ public class Escenario {
             Escenario aux2 = new Escenario(this);
             aux2.op2(i, -1);
             ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux2.valorHeuristico(1), aux2));
-
+            
+            System.out.println("getTodosSucesores estacionesConDemanda: " + estacionesConDemanda.size());
             for (Map.Entry<Integer, Integer> est : estacionesConDemanda.entrySet()) {
                 Escenario b = new Escenario(this);
                 if (b.op2(i, est.getKey())) {
@@ -613,13 +617,13 @@ public class Escenario {
     //posE es la posicion en estaciones de la estacion que se le va a asignar
     //v es el viaje donde se van a realizar als modificaciones
     public boolean asignarOrigen(Viaje v, int posE) {
-        if (!estacionesDisponibilidad.get(posE)) {
-            return false;
-        }
-
+        if(estacionesDisponibilidad.size() < 1) return false;
         int posAnt = getEstacion(v.getOrigenx(), v.getOrigeny());
 
         if (posE >= 0) {
+            if (!estacionesDisponibilidad.get(posE)) {
+                return false;
+            }
             Estacion e = estaciones.get(posE);
             Estacion eAnt = estaciones.get(posAnt);
 
@@ -712,6 +716,7 @@ public class Escenario {
     //para pasarle un elemento vacio es suficiente con pasarle -1
     public boolean asignarDestino1(Viaje v, int posE) {
         int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
+        System.out.print("posAnt: " + posAnt);
         if (posE >= 0) {
             Estacion e = estaciones.get(posE);
             int eDemanda = estacionesConDemanda.get(posE);
