@@ -218,7 +218,7 @@ public class Test extends javax.swing.JFrame {
                 seed = Integer.valueOf(jtxtSemilla.getText());
             }
             
-            escenario = new Escenario(Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
+            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
             
            if (jcmbEstado.getSelectedIndex() == 0) {
                 estadoIni = "Estado Inicial: Vacio";
