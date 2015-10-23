@@ -179,7 +179,7 @@ public class Escenario {
     
     public void generarEstadoInicialRandom() {
         int count = 0;
-        while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
+        /*while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
             int rando = new Random().nextInt(estacionesSinDemanda.size());
             int randd1 = new Random().nextInt(estacionesConDemanda.size());
             //int randd2 = new Random().nextInt(estacionesConDemanda.size());
@@ -189,27 +189,32 @@ public class Escenario {
             viajes.add(v);
             //asignarDestino2(v,randd2);
             ++count;
-        }
-        /*for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
-            Estacion estacionOrigen = estaciones.get(entryCon.getKey());
-            int destTmp = new Random().nextInt(estacionesSinDemanda.size());
-            Estacion estacionDest = null;
+        }*/
+        for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
+
+            Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
+            asignarOrigen(v, entrySin.getKey());
+            
+            int destTmp = new Random().nextInt(estacionesConDemanda.size());
             int count2 = 0;
-            for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
+            
+            for (Map.Entry<Integer, Integer> entryCon : estacionesConDemanda.entrySet()) {
                 if (destTmp == count2) {
-                    estacionDest = estaciones.get(entrySin.getKey());
+                    asignarDestino1(v, entryCon.getKey());
                 }
                 count2++;
             }
-            Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
-            nuevoViaje.setNBDest1(entryCon.getValue());
-            viajes.add(nuevoViaje);
+            //Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
+            //nuevoViaje.setNBDest1(entryCon.getValue());
+            //viajes.add(nuevoViaje);
+            viajes.add(v);
+            
             count++;
             if (nFurgonetas < count) {
                 break;
             }
         }
-*/
+
     }
     
     /*
