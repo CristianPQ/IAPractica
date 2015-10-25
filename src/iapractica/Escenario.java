@@ -9,6 +9,7 @@ package iapractica;
 import IA.Bicing.Estacion;
 import IA.Bicing.Estaciones;
 import aima.search.framework.Successor;
+import static java.lang.Integer.min;
 import java.util.ArrayList;
 ;
 import java.util.Collections;
@@ -40,10 +41,7 @@ public class Escenario {
     private Random r = new Random();
 
     /**
-     * Constructor de la representacion del estado propuesto, con semilla
-     * aleatoria
-     *
-     *
+     * Constructor de la representacion del estado propuesto
      *
      * @param e Numero de estaciones
      * @param b Numero de bicicletas
@@ -58,10 +56,9 @@ public class Escenario {
         nFurgonetas = f;
 
         viajes = new ArrayList();
-        //System.out.println(seed);
         estaciones = new Estaciones(e, b, dem, seed);
         estacionesDisponibilidad = new ArrayList(e);
-        for (int m = 0; m < estacionesDisponibilidad.size(); ++m) {
+        for (int m = 0; m < e; ++m) {
             estacionesDisponibilidad.add(m, Boolean.TRUE);
         }
 
@@ -80,14 +77,14 @@ public class Escenario {
                 estacionesConDemanda.put(new Integer(i), new Integer(faltan));
             } else {
 
-                int disponibles = actuales - (demanda - (next - actuales));
+                int disponibles = (next - demanda);
+                disponibles = min(disponibles, actuales);
 
                 if (disponibles > 0) {
                     estacionesSinDemanda.put(new Integer(i), new Integer(disponibles));
                 }
             }
         }
-
     }
 
     public ArrayList<Boolean> getEstacionesDisponibilidad() {
@@ -101,7 +98,7 @@ public class Escenario {
         estaciones = clone.getEstaciones();
 
         estacionesSinDemanda = new HashMap<Integer, Integer>(clone.getEstacionesSinDemanda());
-        
+
         estacionesDisponibilidad = new ArrayList(clone.getEstacionesDisponibilidad());
         System.out.println("tamaño estacioensDiponibilidad: " + estacionesDisponibilidad.size());
 
@@ -127,17 +124,7 @@ public class Escenario {
      */
     public void generarEstadoInicialRandom() {
         int count = 0;
-        /*while(count < estacionesSinDemanda.size() && count < nFurgonetas) {
-         int rando = new Random().nextInt(estacionesSinDemanda.size());
-         int randd1 = new Random().nextInt(estacionesConDemanda.size());
-         //int randd2 = new Random().nextInt(estacionesConDemanda.size());
-         Viaje v = new Viaje(-1,-1,-1,-1,-1,-1);
-         asignarOrigen(v, rando);
-         asignarDestino1(v, randd1);
-         viajes.add(v);
-         //asignarDestino2(v,randd2);
-         ++count;
-         }*/
+
         for (Map.Entry<Integer, Integer> entrySin : estacionesSinDemanda.entrySet()) {
 
             Viaje v = new Viaje(-1, -1, -1, -1, -1, -1);
@@ -152,9 +139,7 @@ public class Escenario {
                 }
                 count2++;
             }
-            //Viaje nuevoViaje = new Viaje(estacionOrigen.getCoordX(), estacionOrigen.getCoordY(), estacionDest.getCoordX(), estacionDest.getCoordY(), 0, 0);
-            //nuevoViaje.setNBDest1(entryCon.getValue());
-            //viajes.add(nuevoViaje);
+
             viajes.add(v);
 
             count++;
@@ -207,52 +192,6 @@ public class Escenario {
 
     }
 
-    //Falta implementar
-    /*public Boolean anadirViajeFurgoneta(int idFurgoneta, int cap) {
-     return true;
-     }*/
-
-    /*public void operadorOrigenesViajes(Viaje v, Estacion e) {
-     //if(v.getOrigenx() != e.getCoordX() && v.getOrigeny() != e.getCoordY()) {
-     if (e != null) {
-     v.setOrigenx(e.getCoordX());
-     v.setOrigeny(e.getCoordY());
-     }
-     else {
-     v.setOrigenx(-1);
-     v.setOrigeny(-1);
-     }
-     }*/
-
-    /*public void operadorDestino1(Viaje v, Estacion e) {
-     if (e != null) {
-     if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-     if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-     v.setDest1x(e.getCoordX());
-     v.setDest1y(e.getCoordY());
-     }
-     }
-     }
-     else {
-     v.setDest1x(-1);
-     v.setDest1y(-1);
-     }
-     }*/
-
-    /*public void operadorDestino2(Viaje v, Estacion e) {
-     if (e != null) {
-     if (v.getDest2x() != e.getCoordX() && v.getDest2y() != e.getCoordY()) {
-     if (v.getDest1x() != e.getCoordX() && v.getDest1y() != e.getCoordY()) {
-     v.setDest2x(e.getCoordX());
-     v.setDest2y(e.getCoordY());
-     }
-     }
-     }
-     else {
-     v.setDest2x(-1);
-     v.setDest2y(-1);
-     }
-     }*/
     public int valorHeuristico(int h) {
 // Cambiar formula
         int beneficio = 0;
@@ -311,7 +250,7 @@ public class Escenario {
             Escenario aux2 = new Escenario(this);
             aux2.op2(i, -1);
             ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux2.valorHeuristico(1), aux2));
-            
+
             System.out.println("getTodosSucesores estacionesConDemanda: " + estacionesConDemanda.size());
             for (Map.Entry<Integer, Integer> est : estacionesConDemanda.entrySet()) {
                 Escenario b = new Escenario(this);
@@ -477,40 +416,7 @@ public class Escenario {
     public ArrayList<Viaje> getViajes() {
         return viajes;
     }
-    /*
-     // No se usan de momento:
-     public int getPeticionesServidas() {
-     int peticionesServidas = 0;
-     for (Viaje peticion : viajes) {
-     if (peticion.getIdFurgoneta() != -1) {
-     peticionesServidas++;
-     }
-     }
-     return peticionesServidas;
-     }
-     public int getPeticionesNoServidas() {
-     int peticionesServidas = 0;
-     for (Viaje peticion : viajes) {
-     if (peticion.getIdFurgoneta() == -1) {
-     peticionesServidas++;
-     }
-     }
-     return peticionesServidas;
-     }
-     public double calcularBeneficio() {
-     double beneficio = 0;
-     for (Viaje v : viajes) {
-     if (v.getIdFurgoneta() != -1) {
-     beneficio += v.getBeneficioHoy();
-     }
-     }
-     return beneficio - (getKilometros() * PRECIOKILOMETRO);
-     }
-     */
 
-    /**
-     * Revisar si la formula está correcta
-     */
     private int calcDistancia(int x1, int y1, int x2, int y2) {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     }
@@ -561,24 +467,6 @@ public class Escenario {
         return nFurgonetas;
     }
 
-    public static class ValueComparator implements Comparator {
-
-        Map base;
-
-        public ValueComparator(Map base) {
-            this.base = base;
-        }
-
-        @Override
-        public int compare(Object a, Object b) {
-            if ((Integer) base.get(a) >= (Integer) base.get(b)) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-    }
-
     private static Map<Integer, Integer> sortByComparator(Map<Integer, Integer> unsortMap, final boolean order) {
 
         List<Map.Entry<Integer, Integer>> list = new LinkedList<Map.Entry<Integer, Integer>>(unsortMap.entrySet());
@@ -617,7 +505,9 @@ public class Escenario {
     //posE es la posicion en estaciones de la estacion que se le va a asignar
     //v es el viaje donde se van a realizar als modificaciones
     public boolean asignarOrigen(Viaje v, int posE) {
-        if(estacionesDisponibilidad.size() < 1) return false;
+        if (estacionesDisponibilidad.size() < 1) {
+            return false;
+        }
         int posAnt = getEstacion(v.getOrigenx(), v.getOrigeny());
 
         if (posE >= 0) {
@@ -625,7 +515,9 @@ public class Escenario {
                 return false;
             }
             Estacion e = estaciones.get(posE);
-            Estacion eAnt = estaciones.get(posAnt);
+            if (posAnt != -1) {
+                Estacion eAnt = estaciones.get(posAnt);
+            }
 
             int disponibles = estacionesSinDemanda.get(posE);
             if (disponibles < 1) {
@@ -635,10 +527,16 @@ public class Escenario {
             int antNecesarias = v.getNBDest1() + v.getNBDest2();
 
             int posDest1 = getEstacion(v.getDest1x(), v.getDest1y());
-            int demDest1 = estacionesConDemanda.get(posDest1);
+            int demDest1 = 0;
+            if (posDest1 != -1) {
+                demDest1 = estacionesConDemanda.get(posDest1);
+            }
 
             int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
-            int demDest2 = estacionesConDemanda.get(posDest2);
+            int demDest2 = 0;
+            if (posDest1 != -1) {
+                demDest2 = estacionesConDemanda.get(posDest2);
+            }
 
             if (disponibles > antNecesarias) {
 
@@ -691,12 +589,16 @@ public class Escenario {
                     estacionesConDemanda.put(posDest1, demDest1 + antInDest1 - v.getNBDest1());
                 }
             }
-            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            if (posAnt != -1) {
+                estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            }
             estacionesDisponibilidad.add(posE, Boolean.FALSE);
             v.setOrigenx(e.getCoordX());
             v.setOrigeny(e.getCoordY());
         } else {
-            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            if (posAnt != -1) {
+                estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+            }
             v.setOrigenx(-1);
             v.setOrigeny(-1);
             v.setDest1x(-1);
@@ -716,8 +618,10 @@ public class Escenario {
     //para pasarle un elemento vacio es suficiente con pasarle -1
     public boolean asignarDestino1(Viaje v, int posE) {
         //mirar si la estacion del viaje esta vacio
-        if(v.getOrigenx() < 0) return false;
-        if(v.getDest1x() >= 0) {
+        if (v.getOrigenx() < 0) {
+            return false;
+        }
+        if (v.getDest1x() >= 0) {
             int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
             System.out.print("posAnt: " + posAnt);
             if (posE >= 0) {
@@ -800,31 +704,28 @@ public class Escenario {
                 v.setDest2y(-1);
                 v.setNBDest2(0);
             }
-        }
-        else if(posE >= 0){
+        } else if (posE >= 0) {
             //si la estacion en viaje estaba vacia
             v.setDest1x(estaciones.get(posE).getCoordX());
             v.setDest1y(estaciones.get(posE).getCoordY());
-            int posOrig = getEstacion(v.getOrigenx(),v.getOrigeny());
-            int disponibles = estacionesSinDemanda.get(posOrig)-v.getNBDest2();
+            int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
+            int disponibles = estacionesSinDemanda.get(posOrig) - v.getNBDest2();
             int nec = estacionesConDemanda.get(posE);
-            if(disponibles >= nec) {
+            if (disponibles >= nec) {
                 v.setNBDest1(nec);
                 estacionesConDemanda.put(posE, 0);
-            }
-            else {
-                if(v.getDest2x() >= 0) {
+            } else {
+                if (v.getDest2x() >= 0) {
                     int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
                     int necesario = nec - disponibles;
-                    if(necesario > v.getNBDest2()) {
+                    if (necesario > v.getNBDest2()) {
                         estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
                         estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - v.getNBDest2());
-                        v.setNBDest1(v.getNBDest2()+disponibles);
+                        v.setNBDest1(v.getNBDest2() + disponibles);
                         v.setNBDest2(0);
                         v.setDest2x(-1);
                         v.setDest2y(-1);
-                    }
-                    else {
+                    } else {
                         v.setNBDest2(v.getNBDest2() - necesario);
                         estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + necesario);
                         v.setNBDest2(v.getNBDest2() - necesario);
@@ -832,31 +733,31 @@ public class Escenario {
                         estacionesConDemanda.put(posE, 0);
                         v.setNBDest1(nec);
                     }
-                }
-                else {
+                } else {
                     v.setNBDest1(disponibles);
                     estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - disponibles);
                 }
-                
+
             }
-            
-            
+
         }
         return true;
     }
 
     public boolean asignarDestino2(Viaje v, int posE) {
         //reasignado anterior dest2
-        if(v.getOrigenx() < 0) return false;
+        if (v.getOrigenx() < 0) {
+            return false;
+        }
         int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
-        if(v.getDest2x() >= 0) {
+        if (v.getDest2x() >= 0) {
             int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
             estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
             if (posE >= 0) {
                 if (1 > estacionesConDemanda.get(posE)) {
                     return false;
                 }
-                
+
                 int disponibles = estacionesSinDemanda.get(posOrig) - v.getNBDest1();
                 int aAsignar;
                 if (disponibles >= estacionesConDemanda.get(posE)) {
@@ -871,15 +772,16 @@ public class Escenario {
                 v.setDest2y(-1);
                 v.setNBDest2(0);
             }
-        }
-        else if(posE >= 0){
+        } else if (posE >= 0) {
             if (1 > estacionesConDemanda.get(posE)) {
                 return false;
             }
             int max;
-            if(estacionesConDemanda.get(posE) > estacionesSinDemanda.get(posOrig) - v.getNBDest1()) {
+            if (estacionesConDemanda.get(posE) > estacionesSinDemanda.get(posOrig) - v.getNBDest1()) {
                 max = estacionesSinDemanda.get(posOrig) - v.getNBDest1();
-            } else max = estacionesConDemanda.get(posE);
+            } else {
+                max = estacionesConDemanda.get(posE);
+            }
             v.setNBDest2(max);
             estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - max);
             v.setDest2x(-1);

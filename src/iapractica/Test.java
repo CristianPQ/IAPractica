@@ -204,11 +204,7 @@ public class Test extends javax.swing.JFrame {
         double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
         String estadoIni = "", heuristico = "";
         for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
-            /*if (!semilla.getText().equals("")) {
-                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()), Integer.valueOf(semilla.getText()));
-            } else {
-                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()));
-            }*/
+
             int heuris = 0;
             
             if(jcmbBeneficio.getSelectedIndex() == 1){
@@ -235,16 +231,10 @@ public class Test extends javax.swing.JFrame {
                 estadoIni = "Estado Inicial: Lógico";
                 escenario.generarEstadoInicialLogico();
             }
-            System.out.println(escenario.Beneficios());
+           System.out.println(escenario.Beneficios());
+           jtxtResultado.append("Beneficio: " + Integer.toString(escenario.Beneficios()));
             try {
                 Problem problem;
-                /*if (Heuristico.getSelectedIndex() == 0) {
-                    heuristico = "Heuristico: 1";
-                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction());
-                } else {
-                    heuristico = "Heuristico: 2";
-                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction1());
-                }*/
                 
                 problem = new Problem(escenario, new BSuccessorFunction(), new BGoalTest(), new BHeuristicFunction());
                 
@@ -269,9 +259,12 @@ public class Test extends javax.swing.JFrame {
                 }
                 Escenario board2 = (Escenario) search.getGoalState();
                 
+                //System.out.println(board2.Beneficios());
+           //jtxtResultado.append("Beneficio: " + Integer.toString(board2.Beneficios()));
+                
                 mediabeneficio = board2.Beneficios();
                 //mediaKilometros += board2.getKilometros();
-                jtxtResultado.append("Beneficio: " + mediabeneficio);
+                //jtxtResultado.append("Beneficio: " + mediabeneficio);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -289,11 +282,7 @@ public class Test extends javax.swing.JFrame {
         String estadoIni = "", heuristico = "";
 
         for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
-            /*if (!semilla.getText().equals("")) {
-                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()), Integer.valueOf(semilla.getText()));
-            } else {
-                escenario = new DGBoard(Integer.valueOf(nGasolineras.getText()), Integer.valueOf(nCentros.getText()), Integer.valueOf(ncamiones.getText()));
-            }*/
+
             int heuris = 0;
             
             if(jcmbBeneficio.getSelectedIndex() == 1){
@@ -323,13 +312,6 @@ public class Test extends javax.swing.JFrame {
             System.out.println(escenario.Beneficios());
             try {
                 Problem problem;
-                /*if (Heuristico.getSelectedIndex() == 0) {
-                    heuristico = "Heuristico: 1";
-                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction());
-                } else {
-                    heuristico = "Heuristico: 2";
-                    problem = new Problem(escenario, new DGSuccessorFunction(), new DGGoalTest(), new DGHeuristicFunction1());
-                }*/
                 
                 problem = new Problem(escenario, new BSuccessorFunction2(), new BGoalTest(), new BHeuristicFunction2());
                 
