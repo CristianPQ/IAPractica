@@ -801,7 +801,7 @@ public class Escenario {
                 v.setNBDest2(0);
             }
         }
-        else {
+        else if(posE >= 0){
             //si la estacion en viaje estaba vacia
             v.setDest1x(estaciones.get(posE).getCoordX());
             v.setDest1y(estaciones.get(posE).getCoordY());
@@ -847,26 +847,43 @@ public class Escenario {
 
     public boolean asignarDestino2(Viaje v, int posE) {
         //reasignado anterior dest2
-        int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
-        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
-        if (posE >= 0) {
+        if(v.getOrigenx() < 0) return false;
+        int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
+        if(v.getDest2x() >= 0) {
+            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
+            if (posE >= 0) {
+                if (1 > estacionesConDemanda.get(posE)) {
+                    return false;
+                }
+                
+                int disponibles = estacionesSinDemanda.get(posOrig) - v.getNBDest1();
+                int aAsignar;
+                if (disponibles >= estacionesConDemanda.get(posE)) {
+                    aAsignar = estacionesConDemanda.get(posE);
+                } else {
+                    aAsignar = disponibles;
+                }
+                estacionesConDemanda.put(posE, aAsignar);
+                v.setNBDest2(aAsignar);
+            } else {
+                v.setDest2x(-1);
+                v.setDest2y(-1);
+                v.setNBDest2(0);
+            }
+        }
+        else if(posE >= 0){
             if (1 > estacionesConDemanda.get(posE)) {
                 return false;
             }
-            int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
-            int disponibles = estacionesSinDemanda.get(posOrig) - v.getNBDest1();
-            int aAsignar;
-            if (disponibles >= estacionesConDemanda.get(posE)) {
-                aAsignar = estacionesConDemanda.get(posE);
-            } else {
-                aAsignar = disponibles;
-            }
-            estacionesConDemanda.put(posE, aAsignar);
-            v.setNBDest2(aAsignar);
-        } else {
+            int max;
+            if(estacionesConDemanda.get(posE) > estacionesSinDemanda.get(posOrig) - v.getNBDest1()) {
+                max = estacionesSinDemanda.get(posOrig) - v.getNBDest1();
+            } else max = estacionesConDemanda.get(posE);
+            v.setNBDest2(max);
+            estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - max);
             v.setDest2x(-1);
             v.setDest2y(-1);
-            v.setNBDest2(0);
         }
         return true;
     }
