@@ -715,89 +715,95 @@ public class Escenario {
 
     //para pasarle un elemento vacio es suficiente con pasarle -1
     public boolean asignarDestino1(Viaje v, int posE) {
-        int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
-        System.out.print("posAnt: " + posAnt);
-        if (posE >= 0) {
-            Estacion e = estaciones.get(posE);
-            int eDemanda = estacionesConDemanda.get(posE);
-            if (eDemanda < 1) {
-                return false;
-            }
-
-            Estacion eAnt = estaciones.get(posAnt);
-
-            estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
-            estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
-
-            estacionesDisponibilidad.add(posE, Boolean.FALSE);
-            v.setDest1x(e.getCoordX());
-            v.setDest1y(e.getCoordY());
-
-            int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
-            int posibles = estacionesSinDemanda.get(posOrig);
-
-            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
-
-            //si no tiene dest 2
-            if (v.getDest2x() < 0) {
-                //hay mas bicis disponibles que la demanda
-                if (posibles >= eDemanda) {
-                    estacionesConDemanda.put(posE, 0);
-                    v.setNBDest1(eDemanda);
-                } else {
-                    //menos bicis disponibles que la demanda
-                    estacionesConDemanda.put(posE, eDemanda - posibles);
-                    v.setNBDest1(posibles);
+        //mirar si la estacion del viaje esta vacio
+        if(v.getDest1x() >= 0) {
+            int posAnt = getEstacion(v.getDest1x(), v.getDest1y());
+            System.out.print("posAnt: " + posAnt);
+            if (posE >= 0) {
+                Estacion e = estaciones.get(posE);
+                int eDemanda = estacionesConDemanda.get(posE);
+                if (eDemanda < 1) {
+                    return false;
                 }
-            } else {
-                int disp = posibles - v.getNBDest2();
-                if (disp >= eDemanda) {
-                    estacionesConDemanda.put(posE, 0);
-                    v.setNBDest1(eDemanda);
-                    disp -= eDemanda;
-                    int demDest2 = estacionesConDemanda.get(posDest2);
-                    if (demDest2 > 0) {
-                        if (disp >= demDest2) {
-                            v.setNBDest2(v.getNBDest2() + demDest2);
-                            estacionesConDemanda.put(posDest2, 0);
-                            disp -= demDest2;
-                        } else {
-                            v.setNBDest2(v.getNBDest2() + disp);
-                            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) - disp);
-                        }
-                    }
 
-                } else {
-                    //si hay un dest2 se mantiene que se dejan el maximo en dest1 antes que en dest2
-                    int necesario = eDemanda - disp;
-                    if (v.getNBDest2() > necesario) {
-                        v.setNBDest2(v.getNBDest2() - necesario);
-                        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + necesario);
-                        v.setNBDest2(v.getNBDest2() - necesario);
+                Estacion eAnt = estaciones.get(posAnt);
 
+                estacionesDisponibilidad.add(posAnt, Boolean.TRUE);
+                estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
+
+                estacionesDisponibilidad.add(posE, Boolean.FALSE);
+                v.setDest1x(e.getCoordX());
+                v.setDest1y(e.getCoordY());
+
+                int posOrig = getEstacion(v.getOrigenx(), v.getOrigeny());
+                int posibles = estacionesSinDemanda.get(posOrig);
+
+                int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+
+                //si no tiene dest 2
+                if (v.getDest2x() < 0) {
+                    //hay mas bicis disponibles que la demanda
+                    if (posibles >= eDemanda) {
                         estacionesConDemanda.put(posE, 0);
                         v.setNBDest1(eDemanda);
                     } else {
-                        estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
-                        estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - v.getNBDest2());
-                        v.setNBDest1(v.getNBDest2());
-                        v.setNBDest2(0);
-                        v.setDest2x(-1);
-                        v.setDest2y(-1);
+                        //menos bicis disponibles que la demanda
+                        estacionesConDemanda.put(posE, eDemanda - posibles);
+                        v.setNBDest1(posibles);
+                    }
+                } else {
+                    int disp = posibles - v.getNBDest2();
+                    if (disp >= eDemanda) {
+                        estacionesConDemanda.put(posE, 0);
+                        v.setNBDest1(eDemanda);
+                        disp -= eDemanda;
+                        int demDest2 = estacionesConDemanda.get(posDest2);
+                        if (demDest2 > 0) {
+                            if (disp >= demDest2) {
+                                v.setNBDest2(v.getNBDest2() + demDest2);
+                                estacionesConDemanda.put(posDest2, 0);
+                                disp -= demDest2;
+                            } else {
+                                v.setNBDest2(v.getNBDest2() + disp);
+                                estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) - disp);
+                            }
+                        }
+
+                    } else {
+                        //si hay un dest2 se mantiene que se dejan el maximo en dest1 antes que en dest2
+                        int necesario = eDemanda - disp;
+                        if (v.getNBDest2() > necesario) {
+                            v.setNBDest2(v.getNBDest2() - necesario);
+                            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + necesario);
+                            v.setNBDest2(v.getNBDest2() - necesario);
+
+                            estacionesConDemanda.put(posE, 0);
+                            v.setNBDest1(eDemanda);
+                        } else {
+                            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
+                            estacionesConDemanda.put(posE, estacionesConDemanda.get(posE) - v.getNBDest2());
+                            v.setNBDest1(v.getNBDest2());
+                            v.setNBDest2(0);
+                            v.setDest2x(-1);
+                            v.setDest2y(-1);
+                        }
                     }
                 }
-            }
 
-        } else {
-            estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
-            int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
-            estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
-            v.setDest1x(-1);
-            v.setDest1y(-1);
-            v.setNBDest1(0);
-            v.setDest2x(-1);
-            v.setDest2y(-1);
-            v.setNBDest2(0);
+            } else {
+                estacionesConDemanda.put(posAnt, estacionesConDemanda.get(posAnt) + v.getNBDest1());
+                int posDest2 = getEstacion(v.getDest2x(), v.getDest2y());
+                estacionesConDemanda.put(posDest2, estacionesConDemanda.get(posDest2) + v.getNBDest2());
+                v.setDest1x(-1);
+                v.setDest1y(-1);
+                v.setNBDest1(0);
+                v.setDest2x(-1);
+                v.setDest2y(-1);
+                v.setNBDest2(0);
+            }
+        }
+        else {
+            //si la estacion en viaje estaba vacia
         }
         return true;
     }
