@@ -263,16 +263,6 @@ public class Escenario {
             ret.add(new Successor("Asignar Destino1 " + (-1) + " a viaje" + viajes.get(i) + "H:" + aux3.valorHeuristico(1), aux3));
         }
 
-        /* for (int i = 0; i < viajes.size(); i++) {
-         if (viajes.get(i).getIdFurgoneta() == -1) {
-         for (int k = 0; k < furgonetas.size(); k++) {
-         Escenario b = new Escenario(this);
-         if (b.addPeticionACamionFirstPlace(b.furgonetas.get(k).getId(), b.viajes.get(i).getIdViaje(), NKILOMETROSDIAS)) {
-         ret.add(new Successor("Añadida peticion " + i + " a camion" + b.furgonetas.get(k).getId() + "H:" + b.heuristicValue(1), b));
-         }
-         }
-         }
-         }*/
         return ret;
     }
 
@@ -350,37 +340,7 @@ public class Escenario {
         auxd2.op2(i, -1);
         ret.add(new Successor("Asignar Destino2 " + (-1) + " a viaje" + viajes.get(i) + "H:" + auxd2.valorHeuristico(1), auxd2));
         return ret;
-        /*if (viajes.size() > 1) {
-         int peticion = 0;
-         boolean peticionValida = false;
-         for (int k = 0; k < 1000; k++) {
-         peticion = r.nextInt(viajes.size());
-         if (viajes.get(peticion).getIdFurgoneta() == -1) {
-         peticionValida = true;
-         break;
-         }
-         }
-         if (peticionValida) {
-         boolean colocada = false;
-         int camion = 0;
-         for (int k = 0; k < 1000; k++) {
-         camion = r.nextInt(furgonetas.size());
-         colocada = addBoard.addPeticionACamionFirstPlace(furgonetas.get(camion).getId(), viajes.get(peticion).getIdViaje(), NKILOMETROSDIAS);
-         if (colocada) {
-         break;
-         }
-         }
-         if (colocada) {
-         ret.add(new Successor("Añadida peticion " + peticion + " a camion" + addBoard.furgonetas.get(camion).getId() + "H:" + addBoard.heuristicValue(1), addBoard));
-         }
-         }
-         }
 
-         if (ret.size() == 2) {
-         ret.remove(r.nextInt(2));
-         }
-
-         return ret;*/
     }
 
     public boolean isGoalState() {

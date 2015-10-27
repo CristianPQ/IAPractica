@@ -9,6 +9,7 @@ import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
+import aima.search.informed.SimulatedAnnealingSearch;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -57,6 +58,16 @@ public class Test extends javax.swing.JFrame {
         jbtnSimulatetA = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtxtResultado = new javax.swing.JTextArea();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jtxtTemperatura = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jtxtK = new javax.swing.JTextField();
+        jtxtLamb = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jtxtRepeticiones = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,7 +91,7 @@ public class Test extends javax.swing.JFrame {
 
         jLabel7.setText("(vacía para random)");
 
-        jLabel8.setText("Max Iteraciones :");
+        jLabel8.setText("Max Iteraciones:");
 
         jLabel9.setText("Furgonetas: ");
 
@@ -102,13 +113,31 @@ public class Test extends javax.swing.JFrame {
         jtxtResultado.setRows(5);
         jScrollPane1.setViewportView(jtxtResultado);
 
+        jLabel10.setText("Config. Simulated Annealign:");
+
+        jLabel11.setText("Max Temperatura:");
+
+        jLabel12.setText("K:");
+
+        jLabel13.setText("Lamb:");
+
+        jtxtK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtxtKActionPerformed(evt);
+            }
+        });
+
+        jLabel14.setText("Max. Repeticiones:");
+
+        jLabel15.setText("Ej. 0.01");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -116,19 +145,19 @@ public class Test extends javax.swing.JFrame {
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jcmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jcmbDemanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jcmbBeneficio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jcmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jcmbBeneficio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel10))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(137, 137, 137)
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jtxtRepeticiones))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jtxtIteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jbtnHillC, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -136,9 +165,9 @@ public class Test extends javax.swing.JFrame {
                                 .addComponent(jtxtSemilla, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -147,81 +176,135 @@ public class Test extends javax.swing.JFrame {
                                         .addGap(9, 9, 9)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jtxtBicicletas, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jtxtEstaciones, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                                            .addComponent(jtxtEstaciones, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel7)
+                        .addGap(74, 74, 74)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jtxtLamb, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jtxtTemperatura, javax.swing.GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+                                    .addComponent(jtxtK)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(jtxtIteraciones)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel15)
+                .addGap(110, 110, 110))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(38, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jbtnSimulatetA))
-                .addGap(66, 66, 66))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 636, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jbtnHillC, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jbtnSimulatetA)
+                        .addGap(65, 65, 65))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 636, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jcmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14)
+                            .addComponent(jtxtRepeticiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jcmbDemanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jcmbBeneficio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jtxtEstaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jtxtBicicletas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(jtxtFurgonetas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jtxtSemilla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jtxtIteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(jtxtTemperatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jtxtK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(jtxtLamb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15))))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jcmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jtxtEstaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jcmbDemanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jtxtBicicletas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jcmbBeneficio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jtxtFurgonetas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jtxtSemilla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jtxtIteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbtnHillC)
                     .addComponent(jbtnSimulatetA))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnHillCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnHillCActionPerformed
-        
+
         Escenario escenario;
-        double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
-        String estadoIni = "", heuristico = "";
-        for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
+        double mediatiempo = 0, mediabeneficio = 0, medianodos = 0;
+        String estadoIni = "";
+        for (int i = 0; i < Integer.valueOf(jtxtRepeticiones.getText()); i++) {
 
             int heuris = 0;
-            
-            if(jcmbBeneficio.getSelectedIndex() == 1){
+
+            if (jcmbBeneficio.getSelectedIndex() == 1) {
                 heuris = 1;
             }
-            
+
             int seed;
-            if(jtxtSemilla.getText().equals("")){
+            if (jtxtSemilla.getText().equals("")) {
                 Random r = new Random();
                 seed = r.nextInt(100);
-            }else{
+            } else {
                 seed = Integer.valueOf(jtxtSemilla.getText());
             }
-            
-            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
-            
-           if (jcmbEstado.getSelectedIndex() == 0) {
+
+            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()), Integer.valueOf(jtxtBicicletas.getText()), Integer.valueOf(jtxtFurgonetas.getText()), heuris, seed);
+
+            if (jcmbEstado.getSelectedIndex() == 0) {
                 estadoIni = "Estado Inicial: Vacio";
                 escenario.generarEstadoInicialVacio();
             } else if (jcmbEstado.getSelectedIndex() == 1) {
@@ -231,13 +314,17 @@ public class Test extends javax.swing.JFrame {
                 estadoIni = "Estado Inicial: Lógico";
                 escenario.generarEstadoInicialLogico();
             }
-           System.out.println(escenario.Beneficios());
-           jtxtResultado.append("Beneficio: " + Integer.toString(escenario.Beneficios()));
+            System.out.println(escenario.Beneficios());
+            mediabeneficio += escenario.Beneficios();
             try {
                 Problem problem;
-                
-                problem = new Problem(escenario, new BSuccessorFunction(), new BGoalTest(), new BHeuristicFunction());
-                
+
+                if (heuris == 0) {
+                    problem = new Problem(escenario, new BSuccessorFunction(), new BGoalTest(), new BHeuristicFunction());
+                } else {
+                    problem = new Problem(escenario, new BSuccessorFunction(), new BGoalTest(), new BHeuristicFunction2());
+                }
+
                 Search search = new HillClimbingSearch();
                 Date d1, d2;
                 long temps;
@@ -257,49 +344,43 @@ public class Test extends javax.swing.JFrame {
                     String property = agent.getInstrumentation().getProperty(key);
                     medianodos += Double.valueOf(property);
                 }
-                Escenario board2 = (Escenario) search.getGoalState();
-                
-                //System.out.println(board2.Beneficios());
-           //jtxtResultado.append("Beneficio: " + Integer.toString(board2.Beneficios()));
-                
-                mediabeneficio = board2.Beneficios();
-                //mediaKilometros += board2.getKilometros();
-                //jtxtResultado.append("Beneficio: " + mediabeneficio);
+                //Escenario board2 = (Escenario) search.getGoalState();
+
+                mediabeneficio += escenario.Beneficios();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        
-        
-        
+
+        jtxtResultado.setText("Hill Climming: \n " + estadoIni + " \n Tiempo: " + mediatiempo + "\n Nodos: " + medianodos + "\n Beneficio: " + (mediabeneficio / Integer.valueOf(jtxtRepeticiones.getText())));
+
     }//GEN-LAST:event_jbtnHillCActionPerformed
 
     private void jbtnSimulatetAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSimulatetAActionPerformed
-      
-        Escenario escenario;
-        double mediatiempo = 0, mediabeneficio = 0, medianodos = 0, mediaKilometros = 0;
-        String estadoIni = "", heuristico = "";
 
-        for (int i = 0; i < Integer.valueOf(jtxtIteraciones.getText()); i++) {
+        Escenario escenario;
+        double mediatiempo = 0, mediabeneficio = 0, medianodos = 0;
+        String estadoIni = "";
+        for (int i = 0; i < Integer.valueOf(jtxtRepeticiones.getText()); i++) {
 
             int heuris = 0;
-            
-            if(jcmbBeneficio.getSelectedIndex() == 1){
+
+            if (jcmbBeneficio.getSelectedIndex() == 1) {
                 heuris = 1;
             }
-            
+
             int seed;
-            if(jtxtSemilla.getText().equals("")){
+            if (jtxtSemilla.getText().equals("")) {
                 Random r = new Random();
                 seed = r.nextInt(100);
-            }else{
+            } else {
                 seed = Integer.valueOf(jtxtSemilla.getText());
             }
-            
-            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()),Integer.valueOf(jtxtBicicletas.getText()),Integer.valueOf(jtxtFurgonetas.getText()),heuris,seed);
-            
-           if (jcmbEstado.getSelectedIndex() == 0) {
+
+            escenario = new Escenario(Integer.valueOf(jtxtEstaciones.getText()), Integer.valueOf(jtxtBicicletas.getText()), Integer.valueOf(jtxtFurgonetas.getText()), heuris, seed);
+
+            if (jcmbEstado.getSelectedIndex() == 0) {
                 estadoIni = "Estado Inicial: Vacio";
                 escenario.generarEstadoInicialVacio();
             } else if (jcmbEstado.getSelectedIndex() == 1) {
@@ -312,10 +393,16 @@ public class Test extends javax.swing.JFrame {
             System.out.println(escenario.Beneficios());
             try {
                 Problem problem;
+
+                if (heuris == 0) {
+                    problem = new Problem(escenario, new BSuccessorFunction2(), new BGoalTest(), new BHeuristicFunction());
+                } else {
+                    problem = new Problem(escenario, new BSuccessorFunction2(), new BGoalTest(), new BHeuristicFunction2());
+                }
+
+                //SimulatedAnnealingSearch search = new SimulatedAnnealingSearch(Integer.valueOf(jtxtIteraciones.getText()), Integer.valueOf(jtxtTemperatura.getText()), Integer.valueOf(jtxtK.getText()), Double.valueOf(jtxtLamb.getText()));
+                SimulatedAnnealingSearch search = new SimulatedAnnealingSearch();
                 
-                problem = new Problem(escenario, new BSuccessorFunction2(), new BGoalTest(), new BHeuristicFunction2());
-                
-                Search search = new HillClimbingSearch();
                 Date d1, d2;
                 long temps;
                 Calendar a, b;
@@ -335,16 +422,20 @@ public class Test extends javax.swing.JFrame {
                     medianodos += Double.valueOf(property);
                 }
                 Escenario board2 = (Escenario) search.getGoalState();
-                
-                mediabeneficio = board2.Beneficios();
-                //mediaKilometros += board2.getKilometros();
-                jtxtResultado.append("Beneficio: " + mediabeneficio);
+                mediabeneficio += board2.Beneficios();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        jtxtResultado.setText("Simulated Annaling: \n " + estadoIni + " \n Tiempo: " + mediatiempo + "\n Nodos: " + medianodos + "\n Beneficio: " + (mediabeneficio / Integer.valueOf(jtxtRepeticiones.getText())));
+
+
     }//GEN-LAST:event_jbtnSimulatetAActionPerformed
+
+    private void jtxtKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtxtKActionPerformed
 
     /**
      * @param args the command line arguments
@@ -383,6 +474,12 @@ public class Test extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -401,7 +498,11 @@ public class Test extends javax.swing.JFrame {
     private javax.swing.JTextField jtxtEstaciones;
     private javax.swing.JTextField jtxtFurgonetas;
     private javax.swing.JTextField jtxtIteraciones;
+    private javax.swing.JTextField jtxtK;
+    private javax.swing.JTextField jtxtLamb;
+    private javax.swing.JTextField jtxtRepeticiones;
     private javax.swing.JTextArea jtxtResultado;
     private javax.swing.JTextField jtxtSemilla;
+    private javax.swing.JTextField jtxtTemperatura;
     // End of variables declaration//GEN-END:variables
 }
